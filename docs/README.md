@@ -46,7 +46,7 @@ A generic getter function. Used in [Store](README.md#store)
 
 #### Defined in
 
-index.ts:22
+[index.ts:22](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L22)
 
 ___
 
@@ -75,7 +75,7 @@ therefore its value can only be changed by a [StartHandler](README.md#starthandl
 
 #### Defined in
 
-index.ts:36
+[index.ts:36](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L36)
 
 ___
 
@@ -107,7 +107,7 @@ A generic setter function. Used in [Store](README.md#store)
 
 #### Defined in
 
-index.ts:20
+[index.ts:20](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L20)
 
 ___
 
@@ -139,7 +139,7 @@ A function that gets called once a store gets at least one subscriber. Used in [
 
 #### Defined in
 
-index.ts:28
+[index.ts:28](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L28)
 
 ___
 
@@ -159,7 +159,7 @@ A function that gets called once a store reaches 0 subscribers. Used in [Store](
 
 #### Defined in
 
-index.ts:26
+[index.ts:26](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L26)
 
 ___
 
@@ -178,7 +178,7 @@ provides the current value upon subscription.
 
 #### Defined in
 
-index.ts:60
+[index.ts:60](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L60)
 
 ___
 
@@ -210,7 +210,7 @@ A generic subscriber. Used in [Store](README.md#store)
 
 #### Defined in
 
-index.ts:16
+[index.ts:16](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L16)
 
 ___
 
@@ -230,7 +230,7 @@ A function that's used to unsubscribe a subscriber from a store. Used in [Store]
 
 #### Defined in
 
-index.ts:18
+[index.ts:18](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L18)
 
 ___
 
@@ -262,7 +262,7 @@ A generic updater function. Used in [Store](README.md#store)
 
 #### Defined in
 
-index.ts:24
+[index.ts:24](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L24)
 
 ## Functions
 
@@ -301,7 +301,7 @@ source$.set(16); // triggers both console.logs, printing 16 and 32
 
 #### Defined in
 
-composition.ts:29
+[composition.ts:29](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L29)
 
 ▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStores`, `map`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
 
@@ -339,7 +339,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 #### Defined in
 
-composition.ts:48
+[composition.ts:48](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L48)
 
 ___
 
@@ -382,7 +382,7 @@ a ReadonlyStore
 
 #### Defined in
 
-index.ts:157
+[index.ts:157](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L157)
 
 ___
 
@@ -421,4 +421,4 @@ a Store
 
 #### Defined in
 
-index.ts:88
+[index.ts:88](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L88)
