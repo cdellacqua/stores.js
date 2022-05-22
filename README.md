@@ -66,7 +66,7 @@ store$.update(plusOne); // triggers the above subscriber, printing 3
 ```
 
 A nice feature of `Store<T>` is that it deduplicates subscribers,
-that is you can't accidentally add the same subscribers more than
+that is you can't accidentally add the same subscriber more than
 once to the same store (just like the DOM addEventListener method), although
 every time you add it, it will receive the current value:
 
