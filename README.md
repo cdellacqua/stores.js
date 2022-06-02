@@ -35,7 +35,7 @@ console.log(store$.value); // 1
 When a subscriber is attached to a store it immediately receives the current value.
 Every time the value of the store changes (by using `set` or `update`) all subscribers get the new value.
 
-`Store<T>` also contains a getter (`nOfSubscriptions`) that lets you know how many active subscriptions
+`Store<T>` also contains a getter (`nOfSubscriptions`) that lets you know how many subscriptions
 are active at a given moment (this could be useful if you are trying to optimize your code).
 
 Let's see an example:
@@ -106,8 +106,9 @@ console.log(store$.nOfSubscriptions); // 0
 
 ## Deriving
 
-Deriving a store consists of creating a new store
-that stores a value mapped from the source store.
+A derived store is a `ReadonlyStore<T>` (see below) whose
+value is the result of a computation on one or more
+source stores.
 
 Example:
 
@@ -128,20 +129,20 @@ This type lacks the `set` and `update` methods.
 A `Store<T>` is in fact an extension of a `ReadonlyStore<T>` that adds the aforementioned methods.
 
 As a rule of thumb, it is preferable to pass around `ReadonlyStore<T>`s,
-to better encapsulate your stores and prevent unwanted `set`s or `update`s.
+to better encapsulate your state and prevent unwanted `set`s or `update`s.
 
 ## Lazy loading
 
-To create a `Store<T>` or a `ReadonlyStore<T>` you can use
-the `makeStore(...)` or `makeReadonlyStore(...)` functions.
+To create a `Store<T>` or a `ReadonlyStore<T>` you can use `makeStore(...)` or `makeReadonlyStore(...)`.
 
-They both takes an optional initial value as their first parameter, and
+Both these functions take an optional initial value as their first parameter, and
 that's their most common use case, but sometimes it could be useful
-to lazy load a store or alter its value using a `StartHandler`.
+to lazy load a store or alter its value by using a `StartHandler`.
 
 A `StartHandler` is a function that gets called whenever the store is activated,
 i.e. it gets at least one subscription. If the `StartHandler` returns a function,
-that function is called whenever the store reaches zero subscribers.
+that function will be called whenever the store is deactivated, i.e.
+it has no active subscriptions.
 
 Example:
 ```ts
@@ -164,7 +165,7 @@ const unsubscribe = oneHertzPulse$.subscribe((time) => console.log(time)); // pr
 // for the next five seconds the store will print the current time each second
 
 setTimeout(() => {
-	// prints "cleanup" followed by the current time
+	// prints "cleanup"
 	unsubscribe();
 }, 5000);
 ```
