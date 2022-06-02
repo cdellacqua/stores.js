@@ -81,6 +81,16 @@ describe('examples', () => {
 		store$.set(3); // will trigger console.log, printing 103
 		expect(actual).to.eq(103);
 	});
+	it('readme 6.5', () => {
+		const firstWord$ = makeStore('hello');
+		const secondWord$ = makeStore('world!');
+		const derived$ = makeDerivedStore([firstWord$, secondWord$], ([first, second]) => `${first} ${second}`);
+		let actual = '';
+		derived$.subscribe((v) => (actual = v)); // prints "hello world!"
+		expect(actual).to.eq('hello world!');
+		firstWord$.set('hi'); // will trigger console.log, printing "hi world!"
+		expect(actual).to.eq('hi world!');
+	});
 	it('readme 7', () => {
 		let output = '';
 		let calls = 0;
