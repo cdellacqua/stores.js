@@ -22,6 +22,8 @@ export type Setter<T> = (newValue: T) => void;
 export type Getter<T> = () => T;
 /** A generic updater function. Used in {@link Store} */
 export type Updater<T> = (current: T) => T;
+/** A generic update function. Used in {@link Store} */
+export type Update<T> = (updater: (current: T) => T) => void;
 /** A function that gets called once a store reaches 0 subscribers. Used in {@link Store} */
 export type StopHandler = () => void;
 /** A function that gets called once a store gets at least one subscriber. Used in {@link Store} */
@@ -64,8 +66,8 @@ export type Store<T> = ReadonlyStore<T> & {
 	 */
 	set(v: T): void;
 	/**
-	 * Set a value though an update function that takes the current one as an argument
-	 * and send it to all subscribers.
+	 * Set the new value of the store through an updater function that takes the current one as an argument
+	 * and send the returned value to all subscribers.
 	 * @param updater the update function that will receive the current value and return the new one.
 	 */
 	update(updater: Updater<T>): void;
