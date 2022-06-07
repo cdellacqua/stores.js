@@ -14,6 +14,7 @@ universal-stores
 - [Store](README.md#store)
 - [Subscriber](README.md#subscriber)
 - [Unsubscribe](README.md#unsubscribe)
+- [Update](README.md#update)
 - [Updater](README.md#updater)
 
 ### Functions
@@ -75,7 +76,7 @@ therefore its value can only be changed by a [StartHandler](README.md#starthandl
 
 #### Defined in
 
-[index.ts:36](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L36)
+[index.ts:38](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L38)
 
 ___
 
@@ -139,7 +140,7 @@ A function that gets called once a store gets at least one subscriber. Used in [
 
 #### Defined in
 
-[index.ts:28](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L28)
+[index.ts:30](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L30)
 
 ___
 
@@ -159,7 +160,7 @@ A function that gets called once a store reaches 0 subscribers. Used in [Store](
 
 #### Defined in
 
-[index.ts:26](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L26)
+[index.ts:28](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L28)
 
 ___
 
@@ -178,7 +179,7 @@ provides the current value upon subscription.
 
 #### Defined in
 
-[index.ts:60](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L60)
+[index.ts:62](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L62)
 
 ___
 
@@ -231,6 +232,38 @@ A function that's used to unsubscribe a subscriber from a store. Used in [Store]
 #### Defined in
 
 [index.ts:18](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L18)
+
+___
+
+### Update
+
+Ƭ **Update**<`T`\>: (`updater`: (`current`: `T`) => `T`) => `void`
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Type declaration
+
+▸ (`updater`): `void`
+
+A generic update function. Used in [Store](README.md#store)
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `updater` | (`current`: `T`) => `T` |
+
+##### Returns
+
+`void`
+
+#### Defined in
+
+[index.ts:26](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L26)
 
 ___
 
@@ -382,7 +415,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[index.ts:157](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L157)
+[index.ts:159](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L159)
 
 ___
 
@@ -421,4 +454,4 @@ a Store
 
 #### Defined in
 
-[index.ts:88](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L88)
+[index.ts:90](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L90)
