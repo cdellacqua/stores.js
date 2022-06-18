@@ -6,12 +6,15 @@ universal-stores
 
 ### Type aliases
 
+- [DerivedStoreConfig](README.md#derivedstoreconfig)
+- [EqualityComparator](README.md#equalitycomparator)
 - [Getter](README.md#getter)
 - [ReadonlyStore](README.md#readonlystore)
 - [Setter](README.md#setter)
 - [StartHandler](README.md#starthandler)
 - [StopHandler](README.md#stophandler)
 - [Store](README.md#store)
+- [StoreConfig](README.md#storeconfig)
 - [Subscriber](README.md#subscriber)
 - [Unsubscribe](README.md#unsubscribe)
 - [Update](README.md#update)
@@ -24,6 +27,63 @@ universal-stores
 - [makeStore](README.md#makestore)
 
 ## Type aliases
+
+### DerivedStoreConfig
+
+Ƭ **DerivedStoreConfig**<`T`\>: `Object`
+
+Configurations for derived stores.
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Type declaration
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `comparator?` | [`EqualityComparator`](README.md#equalitycomparator)<`T`\> | (optional, defaults to `(a, b) => a === b`) a function that's used to determine if the current value of the store value is different from the one being set and thus if the store needs to be updated and the subscribers notified. |
+
+#### Defined in
+
+[composition.ts:18](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L18)
+
+___
+
+### EqualityComparator
+
+Ƭ **EqualityComparator**<`T`\>: (`a`: `T`, `b`: `T`) => `boolean`
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Type declaration
+
+▸ (`a`, `b`): `boolean`
+
+A comparison function used to optimize subscribers notifications. Used in [Store](README.md#store)
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `a` | `T` |
+| `b` | `T` |
+
+##### Returns
+
+`boolean`
+
+#### Defined in
+
+[index.ts:28](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L28)
+
+___
 
 ### Getter
 
@@ -76,7 +136,7 @@ therefore its value can only be changed by a [StartHandler](README.md#starthandl
 
 #### Defined in
 
-[index.ts:38](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L38)
+[index.ts:40](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L40)
 
 ___
 
@@ -140,7 +200,7 @@ A function that gets called once a store gets at least one subscriber. Used in [
 
 #### Defined in
 
-[index.ts:30](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L30)
+[index.ts:32](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L32)
 
 ___
 
@@ -160,7 +220,7 @@ A function that gets called once a store reaches 0 subscribers. Used in [Store](
 
 #### Defined in
 
-[index.ts:28](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L28)
+[index.ts:30](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L30)
 
 ___
 
@@ -179,7 +239,32 @@ provides the current value upon subscription.
 
 #### Defined in
 
-[index.ts:62](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L62)
+[index.ts:64](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L64)
+
+___
+
+### StoreConfig
+
+Ƭ **StoreConfig**<`T`\>: `Object`
+
+Configurations for Store<T> and ReadonlyStore<T>.
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Type declaration
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `comparator?` | [`EqualityComparator`](README.md#equalitycomparator)<`T`\> | (optional, defaults to `(a, b) => a === b`) a function that's used to determine if the current value of the store value is different from the one being set and thus if the store needs to be updated and the subscribers notified. |
+| `start?` | [`StartHandler`](README.md#starthandler)<`T`\> | (optional) a [StartHandler](README.md#starthandler) that will get called once there is at least one subscriber to this store. |
+
+#### Defined in
+
+[index.ts:81](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L81)
 
 ___
 
@@ -301,7 +386,7 @@ A generic updater function. Used in [Store](README.md#store)
 
 ### makeDerivedStore
 
-▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStore`, `map`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
+▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStore`, `map`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
 
 Create a derived store.
 
@@ -327,6 +412,7 @@ source$.set(16); // triggers both console.logs, printing 16 and 32
 | :------ | :------ | :------ |
 | `readonlyStore` | [`ReadonlyStore`](README.md#readonlystore)<`TIn`\> | a store or readonly store. |
 | `map` | (`value`: `TIn`) => `TOut` | a function that takes the current value of the source store and maps it to another value. |
+| `config?` | [`DerivedStoreConfig`](README.md#derivedstoreconfig)<`TOut`\> | - |
 
 #### Returns
 
@@ -334,9 +420,9 @@ source$.set(16); // triggers both console.logs, printing 16 and 32
 
 #### Defined in
 
-[composition.ts:29](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L29)
+[composition.ts:40](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L40)
 
-▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStores`, `map`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
+▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStores`, `map`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
 
 Create a derived store from multiple sources.
 
@@ -365,6 +451,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 | :------ | :------ | :------ |
 | `readonlyStores` | { [P in string \| number \| symbol]: ReadonlyStore<TIn[P]\> } | an array of stores or readonly stores. |
 | `map` | (`values`: `TIn`) => `TOut` | a function that takes the current value of all the source stores and maps it to another value. |
+| `config?` | [`DerivedStoreConfig`](README.md#derivedstoreconfig)<`TOut`\> | - |
 
 #### Returns
 
@@ -372,7 +459,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 #### Defined in
 
-[composition.ts:48](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L48)
+[composition.ts:59](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L59)
 
 ___
 
@@ -415,7 +502,83 @@ a ReadonlyStore
 
 #### Defined in
 
-[index.ts:159](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L159)
+[index.ts:227](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L227)
+
+▸ **makeReadonlyStore**<`T`\>(`initialValue`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
+
+Make a store of type T.
+
+Example usage:
+```ts
+const store$ = makeReadonlyStore({prop: 'some value'}, {
+	comparator: (a, b) => a.prop === b.prop,
+	start: (set) => {
+		// ...
+	},
+});
+```
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `initialValue` | `undefined` \| `T` | the initial value of the store. |
+| `config?` | [`StoreConfig`](README.md#storeconfig)<`T`\> | a [StoreConfig](README.md#storeconfig) which contains configuration information such as a value comparator to avoid needless notifications to subscribers and a [StartHandler](README.md#starthandler). |
+
+#### Returns
+
+[`ReadonlyStore`](README.md#readonlystore)<`T`\>
+
+a ReadonlyStore
+
+#### Defined in
+
+[index.ts:245](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L245)
+
+▸ **makeReadonlyStore**<`T`\>(`initialValue`, `startOrConfig?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
+
+Make a store of type T.
+
+Example usage:
+```ts
+let value = 0;
+const store$ = makeReadonlyStore(value, (set) => {
+	value++;
+	set(value);
+});
+console.log(store$.value); // 1
+store$.subscribe((v) => console.log(v)); // immediately prints 2
+console.log(store$.value); // 2
+```
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `initialValue` | `undefined` \| `T` | the initial value of the store. |
+| `startOrConfig?` | [`StartHandler`](README.md#starthandler)<`T`\> \| [`StoreConfig`](README.md#storeconfig)<`T`\> | a [StartHandler](README.md#starthandler) or a [StoreConfig](README.md#storeconfig) which contains configuration information such as a value comparator to avoid needless notifications to subscribers and a [StartHandler](README.md#starthandler). |
+
+#### Returns
+
+[`ReadonlyStore`](README.md#readonlystore)<`T`\>
+
+a ReadonlyStore
+
+#### Defined in
+
+[index.ts:265](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L265)
 
 ___
 
@@ -454,4 +617,74 @@ a Store
 
 #### Defined in
 
-[index.ts:90](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L90)
+[index.ts:105](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L105)
+
+▸ **makeStore**<`T`\>(`initialValue`, `config?`): [`Store`](README.md#store)<`T`\>
+
+Make a store of type T.
+
+Example usage:
+```ts
+const store$ = makeStore(0);
+console.log(store$.value); // 0
+store$.subscribe((v) => console.log(v));
+store$.set(10); // will trigger the above console log, printing 10
+```
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `initialValue` | `undefined` \| `T` | the initial value of the store. |
+| `config?` | [`StoreConfig`](README.md#storeconfig)<`T`\> | a [StoreConfig](README.md#storeconfig) which contains configuration information such as a value comparator to avoid needless notifications to subscribers and a [StartHandler](README.md#starthandler). |
+
+#### Returns
+
+[`Store`](README.md#store)<`T`\>
+
+a Store
+
+#### Defined in
+
+[index.ts:121](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L121)
+
+▸ **makeStore**<`T`\>(`initialValue`, `startOrConfig?`): [`Store`](README.md#store)<`T`\>
+
+Make a store of type T.
+
+Example usage:
+```ts
+const store$ = makeStore(0);
+console.log(store$.value); // 0
+store$.subscribe((v) => console.log(v));
+store$.set(10); // will trigger the above console log, printing 10
+```
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `initialValue` | `undefined` \| `T` | the initial value of the store. |
+| `startOrConfig?` | [`StartHandler`](README.md#starthandler)<`T`\> \| [`StoreConfig`](README.md#storeconfig)<`T`\> | a [StartHandler](README.md#starthandler) or a [StoreConfig](README.md#storeconfig) which contains configuration information such as a value comparator to avoid needless notifications to subscribers and a [StartHandler](README.md#starthandler). |
+
+#### Returns
+
+[`Store`](README.md#store)<`T`\>
+
+a Store
+
+#### Defined in
+
+[index.ts:137](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L137)
