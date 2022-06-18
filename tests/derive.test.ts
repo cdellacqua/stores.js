@@ -86,4 +86,76 @@ describe('derived store', () => {
 		expect(starts2).to.eq(2);
 		expect(stops2).to.eq(2);
 	});
+
+	it('checks the default comparator mechanism using primitives', () => {
+		const store$ = makeStore('hello');
+		const derived$ = makeDerivedStore(store$, (content) => content.length);
+		let calls = 0;
+		derived$.subscribe(() => calls++);
+		expect(calls).to.eq(1);
+		store$.set('world');
+		expect(calls).to.eq(1);
+		store$.set('hello!');
+		expect(calls).to.eq(2);
+	});
+
+	it('checks the comparator mechanism using a custom function', () => {
+		const store$ = makeStore('hello');
+		const derived$ = makeDerivedStore(store$, (content) => content.length, {
+			// consider equal if both are even or both are odd.
+			comparator: (a, b) => a % 2 === b % 2,
+		});
+		let calls = 0;
+		derived$.subscribe(() => calls++);
+		expect(calls).to.eq(1);
+		store$.set('hello world');
+		expect(calls).to.eq(1);
+		store$.set('hello!');
+		expect(calls).to.eq(2);
+		store$.set('hello!hello!');
+		expect(calls).to.eq(2);
+	});
+
+	it('checks the default comparator mechanism using primitives and multiple sources', () => {
+		const store1$ = makeStore('hello');
+		const store2$ = makeStore('hello');
+		const derived$ = makeDerivedStore([store1$, store2$], ([content1, content2]) => (content1 + content2).length);
+		let calls = 0;
+		derived$.subscribe(() => calls++);
+		expect(calls).to.eq(1);
+		store1$.set('world');
+		expect(calls).to.eq(1);
+		store1$.set('hello!');
+		expect(calls).to.eq(2);
+
+		store2$.set('world');
+		expect(calls).to.eq(2);
+		store2$.set('hello!');
+		expect(calls).to.eq(3);
+	});
+
+	it('checks the comparator mechanism using a custom function and multiple sources', () => {
+		const store1$ = makeStore('hello');
+		const store2$ = makeStore('hello');
+		const derived$ = makeDerivedStore([store1$, store2$], ([content1, content2]) => (content1 + content2).length, {
+			// consider equal if both are even or both are odd.
+			comparator: (a, b) => a % 2 === b % 2,
+		});
+		let calls = 0;
+		derived$.subscribe(() => calls++);
+		expect(calls).to.eq(1);
+		store1$.set('hello world');
+		expect(calls).to.eq(1);
+		store1$.set('hello!');
+		expect(calls).to.eq(2);
+		store1$.set('hello!hello!');
+		expect(calls).to.eq(2);
+
+		store2$.set('hello world');
+		expect(calls).to.eq(2);
+		store2$.set('hello!');
+		expect(calls).to.eq(3);
+		store2$.set('hello!hello!');
+		expect(calls).to.eq(3);
+	});
 });

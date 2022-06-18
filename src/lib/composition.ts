@@ -10,7 +10,18 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import {makeReadonlyStore, ReadonlyStore} from '.';
+import {EqualityComparator, makeReadonlyStore, ReadonlyStore} from '.';
+
+/**
+ * Configurations for derived stores.
+ */
+export type DerivedStoreConfig<T> = {
+	/**
+	 * (optional, defaults to `(a, b) => a === b`) a function that's used to determine if the current value of the store value is different from
+	 * the one being set and thus if the store needs to be updated and the subscribers notified.
+	 */
+	comparator?: EqualityComparator<T>;
+};
 
 /**
  * Create a derived store.
@@ -26,7 +37,7 @@ import {makeReadonlyStore, ReadonlyStore} from '.';
  * @param readonlyStore a store or readonly store.
  * @param map a function that takes the current value of the source store and maps it to another value.
  */
-export function makeDerivedStore<TIn, TOut>(readonlyStore: ReadonlyStore<TIn>, map: (value: TIn) => TOut): ReadonlyStore<TOut>;
+export function makeDerivedStore<TIn, TOut>(readonlyStore: ReadonlyStore<TIn>, map: (value: TIn) => TOut, config?: DerivedStoreConfig<TOut>): ReadonlyStore<TOut>;
 
 /**
  * Create a derived store from multiple sources.
@@ -45,9 +56,13 @@ export function makeDerivedStore<TIn, TOut>(readonlyStore: ReadonlyStore<TIn>, m
  * @param readonlyStores an array of stores or readonly stores.
  * @param map a function that takes the current value of all the source stores and maps it to another value.
  */
-export function makeDerivedStore<TIn extends unknown[], TOut>(readonlyStores: {[P in keyof TIn]: ReadonlyStore<TIn[P]>}, map: (values: TIn) => TOut): ReadonlyStore<TOut>;
+export function makeDerivedStore<TIn extends unknown[], TOut>(
+	readonlyStores: {[P in keyof TIn]: ReadonlyStore<TIn[P]>},
+	map: (values: TIn) => TOut,
+	config?: DerivedStoreConfig<TOut>,
+): ReadonlyStore<TOut>;
 
-export function makeDerivedStore<TIn extends unknown | unknown[], TOut>(storeOrStores: TIn, map: (values: TIn) => TOut): ReadonlyStore<TOut> {
+export function makeDerivedStore<TIn extends unknown | unknown[], TOut>(storeOrStores: TIn, map: (values: TIn) => TOut, config?: DerivedStoreConfig<TOut>): ReadonlyStore<TOut> {
 	const isArray = Array.isArray(storeOrStores);
 	const readonlyStores = isArray
 		? (storeOrStores as [ReadonlyStore<unknown>, ...ReadonlyStore<unknown>[]])
@@ -61,28 +76,31 @@ export function makeDerivedStore<TIn extends unknown | unknown[], TOut>(storeOrS
 		}
 	};
 
-	const derived = makeReadonlyStore<TOut>(undefined, (set) => {
-		const cache = new Array<unknown>(readonlyStores.length);
+	const derived = makeReadonlyStore<TOut>(undefined, {
+		comparator: config?.comparator,
+		start: (set) => {
+			const cache = new Array<unknown>(readonlyStores.length);
 
-		let subscriptionCounter = 0;
-		const subscriptions = readonlyStores.map((r, i) =>
-			r.subscribe((newValue) => {
-				cache[i] = newValue;
-				if (subscriptionCounter < readonlyStores.length) {
-					subscriptionCounter++;
-				}
-				if (subscriptionCounter === readonlyStores.length) {
-					set(deriveValues(cache));
-				}
-			}),
-		);
+			let subscriptionCounter = 0;
+			const subscriptions = readonlyStores.map((r, i) =>
+				r.subscribe((newValue) => {
+					cache[i] = newValue;
+					if (subscriptionCounter < readonlyStores.length) {
+						subscriptionCounter++;
+					}
+					if (subscriptionCounter === readonlyStores.length) {
+						set(deriveValues(cache));
+					}
+				}),
+			);
 
-		return () => {
-			for (const unsubscribe of subscriptions) {
-				unsubscribe();
-				subscriptionCounter--;
-			}
-		};
+			return () => {
+				for (const unsubscribe of subscriptions) {
+					unsubscribe();
+				}
+				subscriptionCounter = 0;
+			};
+		},
 	});
 
 	return derived;

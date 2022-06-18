@@ -116,6 +116,39 @@ describe('examples', () => {
 			expect(calls).to.be.greaterThan(2);
 		}, 50);
 	});
+	it('readme 8', () => {
+		const objectStore$ = makeStore(
+			{veryLongText: '...', hash: 0xffaa},
+			{
+				comparator: (a, b) => a.hash === b.hash,
+			},
+		);
+		let calls = 0;
+		objectStore$.subscribe(() => calls++);
+		expect(calls).to.eq(1);
+		objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // will trigger subscribers
+		expect(calls).to.eq(2);
+		objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // won't trigger subscribers
+		expect(calls).to.eq(2);
+	});
+	it('readme 9', () => {
+		const objectStore$ = makeStore({veryLongText: '...', hash: 0xffaa});
+		const derivedObjectStore$ = makeDerivedStore(objectStore$, (x) => x, {
+			comparator: (a, b) => a.hash === b.hash,
+		});
+		let calls = 0;
+		let derivedCalls = 0;
+		objectStore$.subscribe(() => calls++);
+		derivedObjectStore$.subscribe(() => derivedCalls++);
+		expect(calls).to.eq(1);
+		expect(derivedCalls).to.eq(1);
+		objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // will trigger objectStore$ and derivedObjectStore$ subscribers
+		expect(calls).to.eq(2);
+		expect(derivedCalls).to.eq(2);
+		objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // will only trigger objectStore$ subscribers
+		expect(calls).to.eq(3);
+		expect(derivedCalls).to.eq(2);
+	});
 	it('store', () => {
 		const store$ = makeStore(0);
 		expect(store$.value).to.eq(0); // 0

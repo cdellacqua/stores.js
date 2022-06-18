@@ -158,7 +158,7 @@ it has no active subscriptions.
 
 Example:
 ```ts
-import {makeReadonlyStore} from 'universal-stores`;
+import {makeReadonlyStore} from 'universal-stores';
 
 const oneHertzPulse$ = makeReadonlyStore<number>(undefined, (set) => {
 	console.log('start');
@@ -180,4 +180,47 @@ setTimeout(() => {
 	// prints "cleanup"
 	unsubscribe();
 }, 5000);
+```
+
+## Optimizing notifications to subscribers
+
+`makeStore` can also take a configuration object as its second
+argument. The configuration can contain a `StartHandler` and an `EqualityComparator`.
+
+An `EqualityComparator` is a comparing function that takes two arguments: the current value
+of the store and the value that's being set (either by a call to `store$.set` or `store$.update`).
+If the two values are equal (i.e. the function returns true), the store value remains the same
+and the subscribers won't be notified.
+
+By default `makeStore` uses a simple lambda that checks for equality with the strict equality operator, i.e. `(a, b) => a === b`. 
+
+If you use objects in your stores you might consider passing a custom function that performs
+a deep equality check, taking into account the tradeoff between having to perform a more expensive comparison vs unnecessarily notifing lots of subscribers.
+
+
+Similarly, `makeDerivedStore` can also take a configuration object with a custom comparator as its third argument.
+
+Example:
+
+```ts
+import {makeStore} from 'universal-stores';
+
+const objectStore$ = makeStore({veryLongText: '...', hash: 0xffaa}, {
+	comparator: (a, b) => a.hash === b.hash,
+});
+objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // will trigger subscribers
+objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // won't trigger subscribers
+```
+
+Example with derived:
+
+```ts
+import {makeStore, makeDerivedStore} from 'universal-stores';
+
+const objectStore$ = makeStore({veryLongText: '...', hash: 0xffaa});
+const derivedObjectStore$ = makeDerivedStore(objectStore$, (x) => x, {
+	comparator: (a, b) => a.hash === b.hash,
+});
+objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // will trigger objectStore$ and derivedObjectStore$ subscribers
+objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // will only trigger objectStore$ subscribers
 ```

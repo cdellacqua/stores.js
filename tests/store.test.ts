@@ -147,4 +147,49 @@ describe('store', () => {
 		unsubscribe1();
 		expect(store$.nOfSubscriptions).to.eq(0);
 	});
+
+	it('checks the default comparator mechanism using primitives', () => {
+		const store$ = makeStore('hello');
+		let calls = 0;
+		store$.subscribe(() => calls++);
+		expect(calls).to.eq(1);
+		store$.set('hello');
+		expect(calls).to.eq(1);
+		store$.set('hello!');
+		expect(calls).to.eq(2);
+		expect(store$.value).to.eq('hello!');
+	});
+
+	it('checks the default comparator mechanism using objects', () => {
+		const initial = {};
+		const equalValue = {};
+		const store$ = makeStore(initial);
+		let calls = 0;
+		store$.subscribe(() => calls++);
+		expect(calls).to.eq(1);
+		store$.set(equalValue);
+		expect(calls).to.eq(2);
+		store$.set(equalValue);
+		expect(calls).to.eq(2);
+		expect(store$.value).to.eq(equalValue);
+	});
+
+	it('checks the comparator mechanism using a custom function', () => {
+		const initial = {some: 'property'};
+		const equalValue = {some: 'property'};
+		const store$ = makeStore(initial, {
+			comparator: (a, b) => a.some === b.some,
+		});
+		let calls = 0;
+		store$.subscribe(() => calls++);
+		expect(calls).to.eq(1);
+		store$.set(equalValue);
+		expect(calls).to.eq(1);
+
+		expect(store$.value).to.not.eq(equalValue);
+		expect(store$.value).to.eq(initial);
+
+		store$.set({some: 'property!'});
+		expect(calls).to.eq(2);
+	});
 });
