@@ -4,7 +4,7 @@ universal-stores
 
 ## Table of contents
 
-### Type aliases
+### Type Aliases
 
 - [DerivedStoreConfig](README.md#derivedstoreconfig)
 - [EqualityComparator](README.md#equalitycomparator)
@@ -26,7 +26,7 @@ universal-stores
 - [makeReadonlyStore](README.md#makereadonlystore)
 - [makeStore](README.md#makestore)
 
-## Type aliases
+## Type Aliases
 
 ### DerivedStoreConfig
 
@@ -130,8 +130,8 @@ therefore its value can only be changed by a [StartHandler](README.md#starthandl
 
 | Name | Type |
 | :------ | :------ |
-| ``get` **nOfSubscriptions**(): `number`` | `Object` |
-| ``get` **value**(): `T`` | `Object` |
+| ``get` **nOfSubscriptions**(): `number`` | {} |
+| ``get` **value**(): `T`` | {} |
 | `subscribe` | (`subscriber`: [`Subscriber`](README.md#subscriber)<`T`\>) => [`Unsubscribe`](README.md#unsubscribe) |
 
 #### Defined in
