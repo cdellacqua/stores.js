@@ -67,6 +67,6 @@
 		"vite": "^2.6.4"
 	},
 	"dependencies": {
-		"@cdellacqua/signals": "^4.1.0"
+		"@cdellacqua/signals": "^4.1.1"
 	}
 }
