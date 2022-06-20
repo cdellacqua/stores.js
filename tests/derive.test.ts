@@ -15,6 +15,13 @@ describe('derived store', () => {
 		expect(derived$.value).to.eq(7 * 13);
 	});
 
+	it('creates a derived using two sources of different types', () => {
+		const source1$ = makeReadonlyStore(7);
+		const source2$ = makeReadonlyStore('13');
+		const derived$ = makeDerivedStore([source1$, source2$], ([v1, v2]) => v1 + Number(v2));
+		expect(derived$.value).to.eq(7 + 13);
+	});
+
 	it('tests that the derived store is reactive to change', () => {
 		const source1$ = makeStore(7);
 		const source2$ = makeStore(13);

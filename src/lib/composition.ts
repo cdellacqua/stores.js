@@ -56,23 +56,27 @@ export function makeDerivedStore<TIn, TOut>(readonlyStore: ReadonlyStore<TIn>, m
  * @param readonlyStores an array of stores or readonly stores.
  * @param map a function that takes the current value of all the source stores and maps it to another value.
  */
-export function makeDerivedStore<TIn extends unknown[], TOut>(
+export function makeDerivedStore<TIn extends [unknown, ...unknown[]], TOut>(
 	readonlyStores: {[P in keyof TIn]: ReadonlyStore<TIn[P]>},
 	map: (values: TIn) => TOut,
 	config?: DerivedStoreConfig<TOut>,
 ): ReadonlyStore<TOut>;
 
-export function makeDerivedStore<TIn extends unknown | unknown[], TOut>(storeOrStores: TIn, map: (values: TIn) => TOut, config?: DerivedStoreConfig<TOut>): ReadonlyStore<TOut> {
+export function makeDerivedStore<TIn extends unknown | [unknown, ...unknown[]], TOut>(
+	storeOrStores: TIn,
+	map: (values: TIn) => TOut,
+	config?: DerivedStoreConfig<TOut>,
+): ReadonlyStore<TOut> {
 	const isArray = Array.isArray(storeOrStores);
 	const readonlyStores = isArray
 		? (storeOrStores as [ReadonlyStore<unknown>, ...ReadonlyStore<unknown>[]])
 		: ([storeOrStores] as [ReadonlyStore<unknown>, ...ReadonlyStore<unknown>[]]);
 
-	const deriveValues = (values: unknown | unknown[]) => {
+	const deriveValues = (values: unknown | [unknown, ...unknown[]]) => {
 		if (isArray) {
 			return map(values as TIn);
 		} else {
-			return map((values as unknown[])[0] as TIn);
+			return map((values as [unknown, ...unknown[]])[0] as TIn);
 		}
 	};
 
