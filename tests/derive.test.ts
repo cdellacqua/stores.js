@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {makeDerivedStore, makeReadonlyStore, makeStore} from '../src/lib';
+import {makeDerivedStore, makeReadonlyStore, makeStore, ReadonlyStore} from '../src/lib';
 
 describe('derived store', () => {
 	it('creates a derived using one source', () => {
@@ -164,5 +164,33 @@ describe('derived store', () => {
 		expect(calls).to.eq(3);
 		store2$.set('hello!hello!');
 		expect(calls).to.eq(3);
+	});
+
+	it('chains multiple derived stores', () => {
+		const base$ = makeStore('hello');
+		const identityPlusOne = (x: string) => x + '1';
+		const chainLength = 100;
+		const chain: ReadonlyStore<string>[] = new Array(chainLength);
+		const subscriberValues: string[] = new Array(chainLength);
+		for (let i = 0; i < chainLength; i++) {
+			if (i === 0) {
+				chain[i] = makeDerivedStore(base$, identityPlusOne);
+			} else {
+				chain[i] = makeDerivedStore(chain[i - 1], identityPlusOne);
+			}
+			chain[i].subscribe((v) => (subscriberValues[i] = v));
+			expect(subscriberValues.reduce((sum, cur) => sum + (cur !== undefined ? 1 : 0), 0)).to.eq(i + 1);
+			for (let j = 0; j <= i; j++) {
+				if (j < i) {
+					// Each derived has an explicit subscription (the one created above)
+					// and an implicit subscription (because each derived depends on the previous one).
+					expect(chain[j].nOfSubscriptions).to.eq(2, `i: ${i}, j: ${j}`);
+				} else {
+					// The last store only has the explicit subscription.
+					expect(chain[j].nOfSubscriptions).to.eq(1, `i: ${i}, j: ${j}`);
+				}
+			}
+		}
+		expect(chain[chain.length - 1].value).to.eq('hello' + '1'.repeat(chainLength));
 	});
 });
