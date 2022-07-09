@@ -83,17 +83,20 @@ export function makeDerivedStore<TIn extends unknown | [unknown, ...unknown[]], 
 	const derived = makeReadonlyStore<TOut>(undefined, {
 		comparator: config?.comparator,
 		start: (set) => {
-			const cache = new Array<unknown>(readonlyStores.length);
+			let cache = new Array<unknown>(readonlyStores.length);
 
 			let subscriptionCounter = 0;
 			const subscriptions = readonlyStores.map((r, i) =>
 				r.subscribe((newValue) => {
-					cache[i] = newValue;
 					if (subscriptionCounter < readonlyStores.length) {
+						cache[i] = newValue;
 						subscriptionCounter++;
 					}
 					if (subscriptionCounter === readonlyStores.length) {
-						set(deriveValues(cache));
+						const updatedCached = [...cache];
+						updatedCached[i] = newValue;
+						set(deriveValues(updatedCached));
+						cache = updatedCached;
 					}
 				}),
 			);

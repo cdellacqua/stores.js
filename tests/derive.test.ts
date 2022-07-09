@@ -193,4 +193,16 @@ describe('derived store', () => {
 		}
 		expect(chain[chain.length - 1].value).to.eq('hello' + '1'.repeat(chainLength));
 	});
+
+	it('tests the derived store cache when references are involved', () => {
+		const base$ = makeStore({hello: 'world!'});
+		const derived$ = makeDerivedStore([base$], (x) => x, {
+			comparator: (a, b) => a[0].hello === b[0].hello,
+		});
+		let calls = 0;
+		derived$.subscribe(() => calls++);
+		expect(calls).to.eq(1);
+		base$.set({hello: 'welt!'});
+		expect(calls).to.eq(2);
+	});
 });
