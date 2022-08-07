@@ -15,6 +15,8 @@ This package provides a framework-agnostic implementation of this concept.
 
 ## Store
 
+In a nutshell, stores are observable containers of values.
+
 A `Store<T>` is an object that provides the following methods:
 
 - `subscribe(subscriber)`, to attach subscribers;
@@ -157,6 +159,7 @@ that function will be called whenever the store is deactivated, i.e.
 it has no active subscriptions.
 
 Example:
+
 ```ts
 import {makeReadonlyStore} from 'universal-stores';
 
@@ -192,11 +195,10 @@ of the store and the value that's being set (either by a call to `store$.set` or
 If the two values are equal (i.e. the function returns true), the store value remains the same
 and the subscribers won't be notified.
 
-By default `makeStore` uses a simple lambda that checks for equality with the strict equality operator, i.e. `(a, b) => a === b`. 
+By default `makeStore` uses a simple lambda that checks for equality with the strict equality operator, i.e. `(a, b) => a === b`.
 
 If you use objects in your stores you might consider passing a custom function that performs
 a deep equality check, taking into account the tradeoff between having to perform a more expensive comparison vs unnecessarily notifing lots of subscribers.
-
 
 Similarly, `makeDerivedStore` can also take a configuration object with a custom comparator as its third argument.
 
@@ -205,9 +207,12 @@ Example:
 ```ts
 import {makeStore} from 'universal-stores';
 
-const objectStore$ = makeStore({veryLongText: '...', hash: 0xffaa}, {
-	comparator: (a, b) => a.hash === b.hash,
-});
+const objectStore$ = makeStore(
+	{veryLongText: '...', hash: 0xffaa},
+	{
+		comparator: (a, b) => a.hash === b.hash,
+	},
+);
 objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // will trigger subscribers
 objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // won't trigger subscribers
 ```
@@ -224,3 +229,29 @@ const derivedObjectStore$ = makeDerivedStore(objectStore$, (x) => x, {
 objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // will trigger objectStore$ and derivedObjectStore$ subscribers
 objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // will only trigger objectStore$ subscribers
 ```
+
+## Motivation
+
+UI frameworks often ship with their own state management layer,
+either built-in or provided by third parties.
+
+State management, however, should **not** be coupled to
+the UI framework or library you're currently working with. Moreover, state management
+is also useful in non-UI applications (e.g. backend, background processes, etc.).
+
+universal-stores is a standalone and lightweight state management library whose only concern
+is providing primitives for storing and observing state. These primitives can then
+be used as building blocks for libraries
+and applications of any kind, decoupled from
+the presentation layer until the very moment
+you need to show data to the user.
+
+## Ecosystem
+
+For a complete list of packages that use universal-stores you can look at the [dependents tab on npm](https://www.npmjs.com/package/universal-stores?activeTab=dependents).
+
+### Adapters
+
+- **ReactJS/React Native**: [@universal-stores/react-adapter](https://www.npmjs.com/package/@universal-stores/react-adapter);
+- **SolidJS**: [@universal-stores/solid-adapter](https://www.npmjs.com/package/@universal-stores/solid-adapter);
+- **Svelte**: no adapter needed, as having a `subscribe` method is enough to qualify as a Svelte-compatible store.
