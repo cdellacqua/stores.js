@@ -440,10 +440,10 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 #### Type parameters
 
-| Name | Type |
-| :------ | :------ |
-| `TIn` | extends `Record`<`string`, `unknown`\> |
-| `TOut` | `TOut` |
+| Name |
+| :------ |
+| `TIn` |
+| `TOut` |
 
 #### Parameters
 

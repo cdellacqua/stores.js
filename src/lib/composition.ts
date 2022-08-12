@@ -56,7 +56,7 @@ export function makeDerivedStore<TIn, TOut>(readonlyStore: ReadonlyStore<TIn>, m
  * @param readonlyStores an array of stores or readonly stores.
  * @param map a function that takes the current value of all the source stores and maps it to another value.
  */
-export function makeDerivedStore<TIn extends Record<string, unknown>, TOut>(
+export function makeDerivedStore<TIn, TOut>(
 	readonlyStores: {[K in keyof TIn]: ReadonlyStore<TIn[K]>},
 	map: (value: {[K in keyof TIn]: TIn[K]}) => TOut,
 	config?: DerivedStoreConfig<TOut>,
