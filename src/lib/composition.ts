@@ -37,7 +37,11 @@ export type DerivedStoreConfig<T> = {
  * @param readonlyStore a store or readonly store.
  * @param map a function that takes the current value of the source store and maps it to another value.
  */
-export function makeDerivedStore<TIn, TOut>(readonlyStore: ReadonlyStore<TIn>, map: (value: TIn) => TOut, config?: DerivedStoreConfig<TOut>): ReadonlyStore<TOut>;
+export function makeDerivedStore<TIn, TOut>(
+	readonlyStore: ReadonlyStore<TIn>,
+	map: (value: TIn) => TOut,
+	config?: DerivedStoreConfig<TOut>,
+): ReadonlyStore<TOut>;
 
 /**
  * Create a derived store from multiple sources.
@@ -67,43 +71,94 @@ export function makeDerivedStore<TIn, TOut>(
 	map: (values: TIn | {[K in keyof TIn]: TIn[K]}) => TOut,
 	config?: DerivedStoreConfig<TOut>,
 ): ReadonlyStore<TOut> {
-	const hasMultipleSources = !('subscribe' in (readonlyStoreOrStores as {subscribe: unknown}));
-	const sources = hasMultipleSources ? (readonlyStoreOrStores as {[K in keyof TIn]: ReadonlyStore<K>}) : {source: readonlyStoreOrStores as ReadonlyStore<TIn>};
+	const isArray = Array.isArray(readonlyStoreOrStores);
+	const argumentIsAStore =
+		!isArray &&
+		'subscribe' in (readonlyStoreOrStores as ReadonlyStore<unknown>) &&
+		'nOfSubscriptions' in (readonlyStoreOrStores as ReadonlyStore<unknown>) &&
+		'content' in (readonlyStoreOrStores as ReadonlyStore<unknown>);
 
-	const nOfSources = Object.keys(sources).length;
-
-	const deriveValues = hasMultipleSources
-		? (values: Record<string, unknown>) => map(values as {[K in keyof TIn]: TIn[K]})
-		: ({source}: Record<string, unknown>) => map(source as TIn);
+	const nOfSources = argumentIsAStore
+		? 1
+		: isArray
+		? readonlyStoreOrStores.length
+		: Object.keys(readonlyStoreOrStores).length;
 
 	const derived$ = makeReadonlyStore<TOut>(undefined, {
 		comparator: config?.comparator,
-		start: (set) => {
-			let cache: Record<string, unknown> = {};
+		start:
+			nOfSources === 0
+				? (set) => {
+						set(map((isArray ? [] : {}) as TIn | {[K in keyof TIn]: TIn[K]}));
+				  }
+				: argumentIsAStore
+				? (set) => {
+						const unsubscribe = (readonlyStoreOrStores as ReadonlyStore<TIn>).subscribe(
+							(newValue) => set(map(newValue)),
+						);
 
-			let subscriptionCounter = 0;
-			const subscriptions = Object.entries(sources).map(([name, store$]: [string, ReadonlyStore<unknown>]) =>
-				store$.subscribe((newValue) => {
-					if (subscriptionCounter < nOfSources) {
-						cache[name] = newValue;
-						subscriptionCounter++;
-					}
-					if (subscriptionCounter === nOfSources) {
-						const updatedCached = {...cache};
-						updatedCached[name] = newValue;
-						set(deriveValues(updatedCached));
-						cache = updatedCached;
-					}
-				}),
-			);
+						return unsubscribe;
+				  }
+				: isArray
+				? // The array and object case are quite similar, but not equal. The code
+				  // that follows could be deduplicated by branching internally, but it would be
+				  // unnecessarily costly to
+				  // check it every time the derived store starts, considering
+				  // that the first argument doesn't change over time.
+				  (set) => {
+						let cache: Array<unknown> = new Array(readonlyStoreOrStores.length);
 
-			return () => {
-				for (const unsubscribe of subscriptions) {
-					unsubscribe();
-				}
-				subscriptionCounter = 0;
-			};
-		},
+						let subscriptionCounter = 0;
+						const subscriptions = readonlyStoreOrStores.map((store$, i) =>
+							store$.subscribe((newValue: unknown) => {
+								if (subscriptionCounter < nOfSources) {
+									cache[i] = newValue;
+									subscriptionCounter++;
+								}
+								if (subscriptionCounter === nOfSources) {
+									const updatedCached = [...cache];
+									updatedCached[i] = newValue;
+									set(map(updatedCached as unknown as {[K in keyof TIn]: TIn[K]}));
+									cache = updatedCached;
+								}
+							}),
+						);
+
+						return () => {
+							for (const unsubscribe of subscriptions) {
+								unsubscribe();
+							}
+							subscriptionCounter = 0;
+						};
+				  }
+				: (set) => {
+						let cache: Record<string, unknown> = {};
+
+						let subscriptionCounter = 0;
+						const subscriptions = Object.entries<ReadonlyStore<unknown>>(
+							readonlyStoreOrStores as {[K in keyof TIn]: ReadonlyStore<TIn[K]>},
+						).map(([name, store$]) =>
+							store$.subscribe((newValue) => {
+								if (subscriptionCounter < nOfSources) {
+									cache[name] = newValue;
+									subscriptionCounter++;
+								}
+								if (subscriptionCounter === nOfSources) {
+									const updatedCached = {...cache};
+									updatedCached[name] = newValue;
+									set(map(updatedCached as unknown as {[K in keyof TIn]: TIn[K]}));
+									cache = updatedCached;
+								}
+							}),
+						);
+
+						return () => {
+							for (const unsubscribe of subscriptions) {
+								unsubscribe();
+							}
+							subscriptionCounter = 0;
+						};
+				  },
 	});
 
 	return derived$;

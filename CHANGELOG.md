@@ -4,7 +4,7 @@
 
 1. nOfSubscriptions has become a function instead of a getter property;
 2. value has been replaced by content, which is also a function now;
-3. makeDerivedStore now accepts an object literal instead of an array
+3. makeDerivedStore can also accept an object literal instead of an array
    as its first argument;
 
 ### From getters to explicit functions (changes 1 and 2)
@@ -73,7 +73,7 @@ extended$.increment();
 console.log(extended$.content()); // 1 [correct]
 ```
 
-### makeDerivedStore, from array to object (change 3)
+### makeDerivedStore can also accept objects (change 3)
 
 makeDerivedStore is really useful, especially when you need to
 combine the content of multiple stores.
@@ -83,7 +83,7 @@ especially when modifying existing code. Changing the argument of makeDerivedSto
 
 Example:
 
-This code in V1 wouldn't have emitted any compile-time error:
+This code in V1 and V2 doesn't trigger any compile-time error:
 
 ```ts
 const source1$ = makeStore(6);

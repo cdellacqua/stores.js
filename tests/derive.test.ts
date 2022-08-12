@@ -132,7 +132,10 @@ describe('derived store', () => {
 	it('checks the default comparator mechanism using primitives and multiple sources', () => {
 		const store1$ = makeStore('hello');
 		const store2$ = makeStore('hello');
-		const derived$ = makeDerivedStore({content1: store1$, content2: store2$}, ({content1, content2}) => (content1 + content2).length);
+		const derived$ = makeDerivedStore(
+			{content1: store1$, content2: store2$},
+			({content1, content2}) => (content1 + content2).length,
+		);
 		let calls = 0;
 		derived$.subscribe(() => calls++);
 		expect(calls).to.eq(1);
@@ -150,10 +153,14 @@ describe('derived store', () => {
 	it('checks the comparator mechanism using a custom function and multiple sources', () => {
 		const store1$ = makeStore('hello');
 		const store2$ = makeStore('hello');
-		const derived$ = makeDerivedStore({content1: store1$, content2: store2$}, ({content1, content2}) => (content1 + content2).length, {
-			// consider equal if both are even or both are odd.
-			comparator: (a, b) => a % 2 === b % 2,
-		});
+		const derived$ = makeDerivedStore(
+			{content1: store1$, content2: store2$},
+			({content1, content2}) => (content1 + content2).length,
+			{
+				// consider equal if both are even or both are odd.
+				comparator: (a, b) => a % 2 === b % 2,
+			},
+		);
 		let calls = 0;
 		derived$.subscribe(() => calls++);
 		expect(calls).to.eq(1);
@@ -185,7 +192,9 @@ describe('derived store', () => {
 				chain[i] = makeDerivedStore(chain[i - 1], identityPlusOne);
 			}
 			chain[i].subscribe((v) => (subscriberValues[i] = v));
-			expect(subscriberValues.reduce((sum, cur) => sum + (cur !== undefined ? 1 : 0), 0)).to.eq(i + 1);
+			expect(subscriberValues.reduce((sum, cur) => sum + (cur !== undefined ? 1 : 0), 0)).to.eq(
+				i + 1,
+			);
 			for (let j = 0; j <= i; j++) {
 				if (j < i) {
 					// Each derived has an explicit subscription (the one created above)
@@ -210,5 +219,28 @@ describe('derived store', () => {
 		expect(calls).to.eq(1);
 		base$.set({hello: 'welt!'});
 		expect(calls).to.eq(2);
+	});
+
+	it('tests that makeDerivedStore also accepts an array', () => {
+		const source1$ = makeStore('hello');
+		const source2$ = makeStore('world!');
+		const derived$ = makeDerivedStore(
+			[source1$, source2$],
+			([first, second]) => first + ' ' + second,
+		);
+		expect(derived$.content()).to.eq('hello world!');
+		expect(derived$.nOfSubscriptions()).to.eq(0);
+	});
+
+	it('tests makeDerivedStore with an empty object', () => {
+		const derived$ = makeDerivedStore({}, () => 'hello');
+		expect(derived$.content()).to.eq('hello');
+		expect(derived$.nOfSubscriptions()).to.eq(0);
+	});
+
+	it('tests makeDerivedStore with an empty array', () => {
+		const derived$ = makeDerivedStore([], () => 'hello');
+		expect(derived$.content()).to.eq('hello');
+		expect(derived$.nOfSubscriptions()).to.eq(0);
 	});
 });

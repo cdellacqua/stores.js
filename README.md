@@ -127,14 +127,32 @@ derived$.subscribe((v) => console.log(v)); // prints 101
 store$.set(3); // will trigger console.log, printing 103
 ```
 
-Example with multiple sources:
+Example with multiple sources using an object (recommended):
 
 ```ts
 import {makeStore, makeDerivedStore} from 'universal-stores';
 
 const firstWord$ = makeStore('hello');
 const secondWord$ = makeStore('world!');
-const derived$ = makeDerivedStore({first: firstWord$, second: secondWord$}, ({first, second}) => `${first} ${second}`);
+const derived$ = makeDerivedStore(
+	{first: firstWord$, second: secondWord$},
+	({first, second}) => `${first} ${second}`,
+);
+derived$.subscribe((v) => console.log(v)); // prints "hello world!"
+firstWord$.set('hi'); // will trigger console.log, printing "hi world!"
+```
+
+Example with multiple sources using an array:
+
+```ts
+import {makeStore, makeDerivedStore} from 'universal-stores';
+
+const firstWord$ = makeStore('hello');
+const secondWord$ = makeStore('world!');
+const derived$ = makeDerivedStore(
+	[firstWord$, secondWord$],
+	([first, second]) => `${first} ${second}`,
+);
 derived$.subscribe((v) => console.log(v)); // prints "hello world!"
 firstWord$.set('hi'); // will trigger console.log, printing "hi world!"
 ```

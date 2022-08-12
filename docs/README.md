@@ -459,7 +459,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 #### Defined in
 
-[composition.ts:59](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L59)
+[composition.ts:63](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L63)
 
 ___
 
@@ -502,7 +502,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[index.ts:223](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L223)
+[index.ts:231](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L231)
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
 
@@ -539,7 +539,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[index.ts:241](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L241)
+[index.ts:252](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L252)
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `startOrConfig?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
 
@@ -578,7 +578,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[index.ts:261](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L261)
+[index.ts:275](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L275)
 
 ___
 

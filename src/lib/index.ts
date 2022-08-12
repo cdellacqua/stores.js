@@ -134,7 +134,10 @@ export function makeStore<T>(initialValue: T | undefined, config?: StoreConfig<T
  * @param startOrConfig a {@link StartHandler} or a {@link StoreConfig} which contains configuration information such as a value comparator to avoid needless notifications to subscribers and a {@link StartHandler}.
  * @returns a Store
  */
-export function makeStore<T>(initialValue: T | undefined, startOrConfig?: StartHandler<T> | StoreConfig<T>): Store<T>;
+export function makeStore<T>(
+	initialValue: T | undefined,
+	startOrConfig?: StartHandler<T> | StoreConfig<T>,
+): Store<T>;
 
 /**
  * Make a store of type T.
@@ -150,13 +153,18 @@ export function makeStore<T>(initialValue: T | undefined, startOrConfig?: StartH
  * @param startOrConfig a {@link StartHandler} or a {@link StoreConfig} which contains configuration information such as a value comparator to avoid needless notifications to subscribers and a {@link StartHandler}.
  * @returns a Store
  */
-export function makeStore<T>(initialValue: T | undefined, startOrConfig?: StartHandler<T> | StoreConfig<T>): Store<T> {
+export function makeStore<T>(
+	initialValue: T | undefined,
+	startOrConfig?: StartHandler<T> | StoreConfig<T>,
+): Store<T> {
 	let mutableValue = initialValue;
 	const signal = makeSignal<T>();
 
 	let stopHandler: StopHandler | undefined;
 	const startHandler = typeof startOrConfig === 'function' ? startOrConfig : startOrConfig?.start;
-	const comparator = (typeof startOrConfig === 'function' ? undefined : startOrConfig?.comparator) ?? ((a, b) => a === b);
+	const comparator =
+		(typeof startOrConfig === 'function' ? undefined : startOrConfig?.comparator) ??
+		((a, b) => a === b);
 
 	const get = () => {
 		if (signal.nOfSubscriptions() > 0) {
@@ -220,7 +228,10 @@ export function makeStore<T>(initialValue: T | undefined, startOrConfig?: StartH
  * @param start a {@link StartHandler} that will get called once there is at least one subscriber to this store.
  * @returns a ReadonlyStore
  */
-export function makeReadonlyStore<T>(initialValue: T | undefined, start?: StartHandler<T>): ReadonlyStore<T>;
+export function makeReadonlyStore<T>(
+	initialValue: T | undefined,
+	start?: StartHandler<T>,
+): ReadonlyStore<T>;
 
 /**
  * Make a store of type T.
@@ -238,7 +249,10 @@ export function makeReadonlyStore<T>(initialValue: T | undefined, start?: StartH
  * @param config a {@link StoreConfig} which contains configuration information such as a value comparator to avoid needless notifications to subscribers and a {@link StartHandler}.
  * @returns a ReadonlyStore
  */
-export function makeReadonlyStore<T>(initialValue: T | undefined, config?: StoreConfig<T>): ReadonlyStore<T>;
+export function makeReadonlyStore<T>(
+	initialValue: T | undefined,
+	config?: StoreConfig<T>,
+): ReadonlyStore<T>;
 
 /**
  * Make a store of type T.
@@ -258,9 +272,15 @@ export function makeReadonlyStore<T>(initialValue: T | undefined, config?: Store
  * @param startOrConfig a {@link StartHandler} or a {@link StoreConfig} which contains configuration information such as a value comparator to avoid needless notifications to subscribers and a {@link StartHandler}.
  * @returns a ReadonlyStore
  */
-export function makeReadonlyStore<T>(initialValue: T | undefined, startOrConfig?: StartHandler<T> | StoreConfig<T>): ReadonlyStore<T>;
+export function makeReadonlyStore<T>(
+	initialValue: T | undefined,
+	startOrConfig?: StartHandler<T> | StoreConfig<T>,
+): ReadonlyStore<T>;
 
-export function makeReadonlyStore<T>(initialValue: T | undefined, startOrConfig?: StartHandler<T> | StoreConfig<T>): ReadonlyStore<T> {
+export function makeReadonlyStore<T>(
+	initialValue: T | undefined,
+	startOrConfig?: StartHandler<T> | StoreConfig<T>,
+): ReadonlyStore<T> {
 	const {content, nOfSubscriptions, subscribe} = makeStore(initialValue, startOrConfig);
 
 	return {
