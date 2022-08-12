@@ -50,11 +50,11 @@ export type ReadonlyStore<T> = {
 	/**
 	 * Return the current number of active subscriptions.
 	 */
-	get nOfSubscriptions(): number;
+	nOfSubscriptions(): number;
 	/**
-	 * Get the current value of the store.
+	 * Get the current value wrapped by the store.
 	 */
-	get value(): T;
+	content(): T;
 };
 
 /**
@@ -94,7 +94,7 @@ export type StoreConfig<T> = {
  * Example usage:
  * ```ts
  * const store$ = makeStore(0);
- * console.log(store$.value); // 0
+ * console.log(store$.content()); // 0
  * store$.subscribe((v) => console.log(v));
  * store$.set(10); // will trigger the above console log, printing 10
  * ```
@@ -110,7 +110,7 @@ export function makeStore<T>(initialValue: T | undefined, start?: StartHandler<T
  * Example usage:
  * ```ts
  * const store$ = makeStore(0);
- * console.log(store$.value); // 0
+ * console.log(store$.content()); // 0
  * store$.subscribe((v) => console.log(v));
  * store$.set(10); // will trigger the above console log, printing 10
  * ```
@@ -126,7 +126,7 @@ export function makeStore<T>(initialValue: T | undefined, config?: StoreConfig<T
  * Example usage:
  * ```ts
  * const store$ = makeStore(0);
- * console.log(store$.value); // 0
+ * console.log(store$.content()); // 0
  * store$.subscribe((v) => console.log(v));
  * store$.set(10); // will trigger the above console log, printing 10
  * ```
@@ -142,7 +142,7 @@ export function makeStore<T>(initialValue: T | undefined, startOrConfig?: StartH
  * Example usage:
  * ```ts
  * const store$ = makeStore(0);
- * console.log(store$.value); // 0
+ * console.log(store$.content()); // 0
  * store$.subscribe((v) => console.log(v));
  * store$.set(10); // will trigger the above console log, printing 10
  * ```
@@ -159,7 +159,7 @@ export function makeStore<T>(initialValue: T | undefined, startOrConfig?: StartH
 	const comparator = (typeof startOrConfig === 'function' ? undefined : startOrConfig?.comparator) ?? ((a, b) => a === b);
 
 	const get = () => {
-		if (signal.nOfSubscriptions > 0) {
+		if (signal.nOfSubscriptions() > 0) {
 			return mutableValue as T;
 		}
 		let v: T | undefined;
@@ -175,7 +175,7 @@ export function makeStore<T>(initialValue: T | undefined, startOrConfig?: StartH
 		signal.emit(mutableValue);
 	};
 	const subscribe = (s: Subscriber<T>) => {
-		if (signal.nOfSubscriptions === 0) {
+		if (signal.nOfSubscriptions() === 0) {
 			stopHandler = startHandler?.(set) as StopHandler | undefined;
 		}
 		const unsubscribe = signal.subscribe(s);
@@ -183,7 +183,7 @@ export function makeStore<T>(initialValue: T | undefined, startOrConfig?: StartH
 
 		return () => {
 			unsubscribe();
-			if (signal.nOfSubscriptions === 0) {
+			if (signal.nOfSubscriptions() === 0) {
 				stopHandler?.();
 				stopHandler = undefined;
 			}
@@ -194,15 +194,11 @@ export function makeStore<T>(initialValue: T | undefined, startOrConfig?: StartH
 	};
 
 	return {
-		get value() {
-			return get();
-		},
+		content: get,
 		set,
 		subscribe,
 		update,
-		get nOfSubscriptions() {
-			return signal.nOfSubscriptions;
-		},
+		nOfSubscriptions: signal.nOfSubscriptions,
 	};
 }
 
@@ -216,9 +212,9 @@ export function makeStore<T>(initialValue: T | undefined, startOrConfig?: StartH
  * 	value++;
  * 	set(value);
  * });
- * console.log(store$.value); // 1
+ * console.log(store$.content()); // 1
  * store$.subscribe((v) => console.log(v)); // immediately prints 2
- * console.log(store$.value); // 2
+ * console.log(store$.content()); // 2
  * ```
  * @param initialValue the initial value of the store.
  * @param start a {@link StartHandler} that will get called once there is at least one subscriber to this store.
@@ -254,9 +250,9 @@ export function makeReadonlyStore<T>(initialValue: T | undefined, config?: Store
  * 	value++;
  * 	set(value);
  * });
- * console.log(store$.value); // 1
+ * console.log(store$.content()); // 1
  * store$.subscribe((v) => console.log(v)); // immediately prints 2
- * console.log(store$.value); // 2
+ * console.log(store$.content()); // 2
  * ```
  * @param initialValue the initial value of the store.
  * @param startOrConfig a {@link StartHandler} or a {@link StoreConfig} which contains configuration information such as a value comparator to avoid needless notifications to subscribers and a {@link StartHandler}.
@@ -265,16 +261,12 @@ export function makeReadonlyStore<T>(initialValue: T | undefined, config?: Store
 export function makeReadonlyStore<T>(initialValue: T | undefined, startOrConfig?: StartHandler<T> | StoreConfig<T>): ReadonlyStore<T>;
 
 export function makeReadonlyStore<T>(initialValue: T | undefined, startOrConfig?: StartHandler<T> | StoreConfig<T>): ReadonlyStore<T> {
-	const base$ = makeStore(initialValue, startOrConfig);
+	const {content, nOfSubscriptions, subscribe} = makeStore(initialValue, startOrConfig);
 
 	return {
-		get value() {
-			return base$.value;
-		},
-		subscribe: base$.subscribe,
-		get nOfSubscriptions() {
-			return base$.nOfSubscriptions;
-		},
+		content,
+		nOfSubscriptions,
+		subscribe,
 	};
 }
 

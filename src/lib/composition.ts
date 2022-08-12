@@ -46,7 +46,7 @@ export function makeDerivedStore<TIn, TOut>(readonlyStore: ReadonlyStore<TIn>, m
  * ```ts
  * const source1$ = makeStore(10);
  * const source2$ = makeStore(-10);
- * const derived$ = makeDerivedStore([source1$, source2$], ([v1, v2]) => v1 + v2);
+ * const derived$ = makeDerivedStore({v1: source1$, v2: source2$}, ({v1, v2}) => v1 + v2);
  * source1$.subscribe((v) => console.log(v)); // prints 10
  * source2$.subscribe((v) => console.log(v)); // prints -10
  * derived$.subscribe((v) => console.log(v)); // prints 0
@@ -56,45 +56,41 @@ export function makeDerivedStore<TIn, TOut>(readonlyStore: ReadonlyStore<TIn>, m
  * @param readonlyStores an array of stores or readonly stores.
  * @param map a function that takes the current value of all the source stores and maps it to another value.
  */
-export function makeDerivedStore<TIn extends [unknown, ...unknown[]], TOut>(
-	readonlyStores: {[P in keyof TIn]: ReadonlyStore<TIn[P]>},
-	map: (values: TIn) => TOut,
+export function makeDerivedStore<TIn extends Record<string, unknown>, TOut>(
+	readonlyStores: {[K in keyof TIn]: ReadonlyStore<TIn[K]>},
+	map: (value: {[K in keyof TIn]: TIn[K]}) => TOut,
 	config?: DerivedStoreConfig<TOut>,
 ): ReadonlyStore<TOut>;
 
-export function makeDerivedStore<TIn extends unknown | [unknown, ...unknown[]], TOut>(
-	storeOrStores: TIn,
-	map: (values: TIn) => TOut,
+export function makeDerivedStore<TIn, TOut>(
+	readonlyStoreOrStores: object,
+	map: (values: TIn | {[K in keyof TIn]: TIn[K]}) => TOut,
 	config?: DerivedStoreConfig<TOut>,
 ): ReadonlyStore<TOut> {
-	const isArray = Array.isArray(storeOrStores);
-	const readonlyStores = isArray
-		? (storeOrStores as [ReadonlyStore<unknown>, ...ReadonlyStore<unknown>[]])
-		: ([storeOrStores] as [ReadonlyStore<unknown>, ...ReadonlyStore<unknown>[]]);
+	const hasMultipleSources = !('subscribe' in (readonlyStoreOrStores as {subscribe: unknown}));
+	const sources = hasMultipleSources ? (readonlyStoreOrStores as {[K in keyof TIn]: ReadonlyStore<K>}) : {source: readonlyStoreOrStores as ReadonlyStore<TIn>};
 
-	const deriveValues = (values: unknown | [unknown, ...unknown[]]) => {
-		if (isArray) {
-			return map(values as TIn);
-		} else {
-			return map((values as [unknown, ...unknown[]])[0] as TIn);
-		}
-	};
+	const nOfSources = Object.keys(sources).length;
 
-	const derived = makeReadonlyStore<TOut>(undefined, {
+	const deriveValues = hasMultipleSources
+		? (values: Record<string, unknown>) => map(values as {[K in keyof TIn]: TIn[K]})
+		: ({source}: Record<string, unknown>) => map(source as TIn);
+
+	const derived$ = makeReadonlyStore<TOut>(undefined, {
 		comparator: config?.comparator,
 		start: (set) => {
-			let cache = new Array<unknown>(readonlyStores.length);
+			let cache: Record<string, unknown> = {};
 
 			let subscriptionCounter = 0;
-			const subscriptions = readonlyStores.map((r, i) =>
-				r.subscribe((newValue) => {
-					if (subscriptionCounter < readonlyStores.length) {
-						cache[i] = newValue;
+			const subscriptions = Object.entries(sources).map(([name, store$]: [string, ReadonlyStore<unknown>]) =>
+				store$.subscribe((newValue) => {
+					if (subscriptionCounter < nOfSources) {
+						cache[name] = newValue;
 						subscriptionCounter++;
 					}
-					if (subscriptionCounter === readonlyStores.length) {
-						const updatedCached = [...cache];
-						updatedCached[i] = newValue;
+					if (subscriptionCounter === nOfSources) {
+						const updatedCached = {...cache};
+						updatedCached[name] = newValue;
 						set(deriveValues(updatedCached));
 						cache = updatedCached;
 					}
@@ -110,5 +106,5 @@ export function makeDerivedStore<TIn extends unknown | [unknown, ...unknown[]], 
 		},
 	});
 
-	return derived;
+	return derived$;
 }

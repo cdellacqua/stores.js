@@ -13,6 +13,10 @@ This package provides a framework-agnostic implementation of this concept.
 
 [Documentation](./docs/README.md)
 
+## Migrating to V2
+
+Please refer to the [changelog](./CHANGELOG.md).
+
 ## Store
 
 In a nutshell, stores are observable containers of values.
@@ -29,9 +33,9 @@ There is also a getter `value` that retrieves the current value of the store:
 import {makeStore} from 'universal-stores';
 
 const store$ = makeStore(0);
-console.log(store$.value); // 0
+console.log(store$.content()); // 0
 store$.set(1);
-console.log(store$.value); // 1
+console.log(store$.content()); // 1
 ```
 
 When a subscriber is attached to a store it immediately receives the current value.
@@ -46,7 +50,7 @@ Let's see an example:
 import {makeStore} from 'universal-stores';
 
 const store$ = makeStore(0);
-console.log(store$.value); // 0
+console.log(store$.content()); // 0
 const unsubscribe = store$.subscribe((v) => console.log(v)); // immediately prints 0
 store$.set(1); // triggers the above subscriber, printing 1
 unsubscribe();
@@ -80,11 +84,11 @@ const subscriber = (v: number) => console.log(v);
 const unsubscribe1 = store$.subscribe(subscriber); // prints 0
 const unsubscribe2 = store$.subscribe(subscriber); // prints 0
 const unsubscribe3 = store$.subscribe(subscriber); // prints 0
-console.log(store$.nOfSubscriptions); // 1
+console.log(store$.nOfSubscriptions()); // 1
 unsubscribe3(); // will remove "subscriber"
 unsubscribe2(); // won't do anything, "subscriber" has already been removed
 unsubscribe1(); // won't do anything, "subscriber" has already been removed
-console.log(store$.nOfSubscriptions); // 0
+console.log(store$.nOfSubscriptions()); // 0
 ```
 
 If you ever needed to add the same function
@@ -95,15 +99,15 @@ import {makeStore} from 'universal-stores';
 
 const store$ = makeStore(0);
 const subscriber = (v: number) => console.log(v);
-console.log(store$.nOfSubscriptions); // 0
+console.log(store$.nOfSubscriptions()); // 0
 const unsubscribe1 = store$.subscribe(subscriber); // prints 0
-console.log(store$.nOfSubscriptions); // 1
+console.log(store$.nOfSubscriptions()); // 1
 const unsubscribe2 = store$.subscribe((v) => subscriber(v)); // prints 0
-console.log(store$.nOfSubscriptions); // 2
+console.log(store$.nOfSubscriptions()); // 2
 unsubscribe2();
-console.log(store$.nOfSubscriptions); // 1
+console.log(store$.nOfSubscriptions()); // 1
 unsubscribe1();
-console.log(store$.nOfSubscriptions); // 0
+console.log(store$.nOfSubscriptions()); // 0
 ```
 
 ## Deriving
@@ -130,7 +134,7 @@ import {makeStore, makeDerivedStore} from 'universal-stores';
 
 const firstWord$ = makeStore('hello');
 const secondWord$ = makeStore('world!');
-const derived$ = makeDerivedStore([firstWord$, secondWord$], ([first, second]) => `${first} ${second}`);
+const derived$ = makeDerivedStore({first: firstWord$, second: secondWord$}, ({first, second}) => `${first} ${second}`);
 derived$.subscribe((v) => console.log(v)); // prints "hello world!"
 firstWord$.set('hi'); // will trigger console.log, printing "hi world!"
 ```
@@ -165,6 +169,7 @@ import {makeReadonlyStore} from 'universal-stores';
 
 const oneHertzPulse$ = makeReadonlyStore<number>(undefined, (set) => {
 	console.log('start');
+	set(performance.now());
 	const interval = setInterval(() => {
 		set(performance.now());
 	}, 1000);
@@ -228,6 +233,34 @@ const derivedObjectStore$ = makeDerivedStore(objectStore$, (x) => x, {
 });
 objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // will trigger objectStore$ and derivedObjectStore$ subscribers
 objectStore$.set({veryLongText: '...', hash: 0xbbdd}); // will only trigger objectStore$ subscribers
+```
+
+## Adding behaviour
+
+If you need to encapsulate behaviour in a custom store, you
+can simply destructure a regular store and add your
+custom methods to the already existing ones.
+
+Example:
+
+```ts
+import {makeStore} from 'universal-stores';
+
+function makeCounterStore(): ReadonlyStore<number> & {increment(): void} {
+	const {subscribe, content, update, nOfSubscriptions} = makeStore(0);
+	return {
+		subscribe,
+		content,
+		nOfSubscriptions,
+		increment() {
+			update((n) => n + 1);
+		},
+	};
+}
+
+const counter$ = makeCounterStore();
+counter$.subscribe(console.log); // immediately prints 0
+counter$.increment(); // will trigger the above console.log, printing 1
 ```
 
 ## Motivation

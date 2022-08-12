@@ -130,8 +130,8 @@ therefore its value can only be changed by a [StartHandler](README.md#starthandl
 
 | Name | Type |
 | :------ | :------ |
-| ``get` **nOfSubscriptions**(): `number`` | {} |
-| ``get` **value**(): `T`` | {} |
+| `content` | () => `T` |
+| `nOfSubscriptions` | () => `number` |
 | `subscribe` | (`subscriber`: [`Subscriber`](README.md#subscriber)<`T`\>) => [`Unsubscribe`](README.md#unsubscribe) |
 
 #### Defined in
@@ -430,7 +430,7 @@ Example usage:
 ```ts
 const source1$ = makeStore(10);
 const source2$ = makeStore(-10);
-const derived$ = makeDerivedStore([source1$, source2$], ([v1, v2]) => v1 + v2);
+const derived$ = makeDerivedStore({v1: source1$, v2: source2$}, ({v1, v2}) => v1 + v2);
 source1$.subscribe((v) => console.log(v)); // prints 10
 source2$.subscribe((v) => console.log(v)); // prints -10
 derived$.subscribe((v) => console.log(v)); // prints 0
@@ -442,15 +442,15 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 | Name | Type |
 | :------ | :------ |
-| `TIn` | extends [`unknown`, ...unknown[]] |
+| `TIn` | extends `Record`<`string`, `unknown`\> |
 | `TOut` | `TOut` |
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `readonlyStores` | { [P in string \| number \| symbol]: ReadonlyStore<TIn[P]\> } | an array of stores or readonly stores. |
-| `map` | (`values`: `TIn`) => `TOut` | a function that takes the current value of all the source stores and maps it to another value. |
+| `readonlyStores` | { [K in string \| number \| symbol]: ReadonlyStore<TIn[K]\> } | an array of stores or readonly stores. |
+| `map` | (`value`: { [K in string \| number \| symbol]: TIn[K] }) => `TOut` | a function that takes the current value of all the source stores and maps it to another value. |
 | `config?` | [`DerivedStoreConfig`](README.md#derivedstoreconfig)<`TOut`\> | - |
 
 #### Returns
@@ -476,9 +476,9 @@ const store$ = makeReadonlyStore(value, (set) => {
 	value++;
 	set(value);
 });
-console.log(store$.value); // 1
+console.log(store$.content()); // 1
 store$.subscribe((v) => console.log(v)); // immediately prints 2
-console.log(store$.value); // 2
+console.log(store$.content()); // 2
 ```
 
 #### Type parameters
@@ -502,7 +502,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[index.ts:227](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L227)
+[index.ts:223](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L223)
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
 
@@ -539,7 +539,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[index.ts:245](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L245)
+[index.ts:241](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L241)
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `startOrConfig?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
 
@@ -552,9 +552,9 @@ const store$ = makeReadonlyStore(value, (set) => {
 	value++;
 	set(value);
 });
-console.log(store$.value); // 1
+console.log(store$.content()); // 1
 store$.subscribe((v) => console.log(v)); // immediately prints 2
-console.log(store$.value); // 2
+console.log(store$.content()); // 2
 ```
 
 #### Type parameters
@@ -578,7 +578,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[index.ts:265](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L265)
+[index.ts:261](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L261)
 
 ___
 
@@ -591,7 +591,7 @@ Make a store of type T.
 Example usage:
 ```ts
 const store$ = makeStore(0);
-console.log(store$.value); // 0
+console.log(store$.content()); // 0
 store$.subscribe((v) => console.log(v));
 store$.set(10); // will trigger the above console log, printing 10
 ```
@@ -626,7 +626,7 @@ Make a store of type T.
 Example usage:
 ```ts
 const store$ = makeStore(0);
-console.log(store$.value); // 0
+console.log(store$.content()); // 0
 store$.subscribe((v) => console.log(v));
 store$.set(10); // will trigger the above console log, printing 10
 ```
@@ -661,7 +661,7 @@ Make a store of type T.
 Example usage:
 ```ts
 const store$ = makeStore(0);
-console.log(store$.value); // 0
+console.log(store$.content()); // 0
 store$.subscribe((v) => console.log(v));
 store$.set(10); // will trigger the above console log, printing 10
 ```

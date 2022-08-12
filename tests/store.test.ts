@@ -4,15 +4,15 @@ import {makeStore} from '../src/lib';
 describe('store', () => {
 	it('creates a store', () => {
 		const store$ = makeStore(0);
-		expect(store$.value).to.eq(0);
-		expect(store$.nOfSubscriptions).to.eq(0);
+		expect(store$.content()).to.eq(0);
+		expect(store$.nOfSubscriptions()).to.eq(0);
 	});
 
 	it('initializes the store using a StartHandler', () => {
 		const store$ = makeStore<number>(undefined, (set) => {
 			set(0);
 		});
-		expect(store$.value).to.eq(0);
+		expect(store$.content()).to.eq(0);
 	});
 
 	it('initializes the store using a StartHandler that modifies the current value every time it gets called', () => {
@@ -21,9 +21,9 @@ describe('store', () => {
 			value++;
 			set(value);
 		});
-		expect(store$.value).to.eq(1);
-		expect(store$.value).to.eq(2);
-		expect(store$.value).to.eq(3);
+		expect(store$.content()).to.eq(1);
+		expect(store$.content()).to.eq(2);
+		expect(store$.content()).to.eq(3);
 	});
 
 	it('tests that the StartHandler gets called whenever the store gets at least one subscriber', () => {
@@ -35,7 +35,7 @@ describe('store', () => {
 		});
 		expect(starts).to.eq(0);
 		expect(stops).to.eq(0);
-		store$.value;
+		store$.content();
 		expect(starts).to.eq(1);
 		expect(stops).to.eq(1);
 		const unsubscribe = store$.subscribe(() => undefined);
@@ -52,18 +52,18 @@ describe('store', () => {
 		const subscriber = () => {
 			count++;
 		};
-		expect(store$.nOfSubscriptions).to.eq(0);
+		expect(store$.nOfSubscriptions()).to.eq(0);
 		store$.subscribe(subscriber);
-		expect(store$.nOfSubscriptions).to.eq(1);
+		expect(store$.nOfSubscriptions()).to.eq(1);
 		store$.subscribe(subscriber);
-		expect(store$.nOfSubscriptions).to.eq(1);
+		expect(store$.nOfSubscriptions()).to.eq(1);
 		store$.set(10);
 		expect(count).to.eq(3);
 	});
 
 	it('sets a new value expecting that all subscribers receive it', () => {
 		const store$ = makeStore(0);
-		expect(store$.value).to.eq(0);
+		expect(store$.content()).to.eq(0);
 		let actual = -1;
 		store$.subscribe((v) => (actual = v));
 		expect(actual).to.eq(0);
@@ -73,7 +73,7 @@ describe('store', () => {
 
 	it('updates the value expecting that all subscribers receive the new one', () => {
 		const store$ = makeStore(0);
-		expect(store$.value).to.eq(0);
+		expect(store$.content()).to.eq(0);
 		let actual = -1;
 		store$.subscribe((v) => (actual = v));
 		expect(actual).to.eq(0);
@@ -90,10 +90,10 @@ describe('store', () => {
 		});
 		expect(starts).to.eq(0);
 		expect(stops).to.eq(0);
-		expect(store$.value).to.eq(0);
+		expect(store$.content()).to.eq(0);
 		expect(starts).to.eq(1);
 		expect(stops).to.eq(1);
-		expect(store$.value).to.eq(0);
+		expect(store$.content()).to.eq(0);
 		expect(starts).to.eq(2);
 		expect(stops).to.eq(2);
 
@@ -115,37 +115,37 @@ describe('store', () => {
 
 		expect(starts).to.eq(1);
 		expect(stops).to.eq(0);
-		expect(store$.value).to.eq(0);
+		expect(store$.content()).to.eq(0);
 		expect(starts).to.eq(1);
 		expect(stops).to.eq(0);
 		unsubscribe();
 		expect(stops).to.eq(1);
-		expect(store$.value).to.eq(0);
+		expect(store$.content()).to.eq(0);
 		expect(starts).to.eq(2);
 		expect(stops).to.eq(2);
 	});
 
 	it('checks that the number of subscription is consistent', () => {
 		const store$ = makeStore(0);
-		expect(store$.nOfSubscriptions).to.eq(0);
+		expect(store$.nOfSubscriptions()).to.eq(0);
 		store$.set(1);
-		expect(store$.nOfSubscriptions).to.eq(0);
+		expect(store$.nOfSubscriptions()).to.eq(0);
 		const unsubscribe1 = store$.subscribe(() => undefined);
-		expect(store$.nOfSubscriptions).to.eq(1);
+		expect(store$.nOfSubscriptions()).to.eq(1);
 		const unsubscribe2 = store$.subscribe(() => undefined);
-		expect(store$.nOfSubscriptions).to.eq(2);
+		expect(store$.nOfSubscriptions()).to.eq(2);
 		const unsubscribe3 = store$.subscribe(() => undefined);
-		expect(store$.nOfSubscriptions).to.eq(3);
+		expect(store$.nOfSubscriptions()).to.eq(3);
 		const unsubscribe4 = store$.subscribe(() => undefined);
-		expect(store$.nOfSubscriptions).to.eq(4);
+		expect(store$.nOfSubscriptions()).to.eq(4);
 		unsubscribe4();
-		expect(store$.nOfSubscriptions).to.eq(3);
+		expect(store$.nOfSubscriptions()).to.eq(3);
 		unsubscribe3();
-		expect(store$.nOfSubscriptions).to.eq(2);
+		expect(store$.nOfSubscriptions()).to.eq(2);
 		unsubscribe2();
-		expect(store$.nOfSubscriptions).to.eq(1);
+		expect(store$.nOfSubscriptions()).to.eq(1);
 		unsubscribe1();
-		expect(store$.nOfSubscriptions).to.eq(0);
+		expect(store$.nOfSubscriptions()).to.eq(0);
 	});
 
 	it('checks the default comparator mechanism using primitives', () => {
@@ -157,7 +157,7 @@ describe('store', () => {
 		expect(calls).to.eq(1);
 		store$.set('hello!');
 		expect(calls).to.eq(2);
-		expect(store$.value).to.eq('hello!');
+		expect(store$.content()).to.eq('hello!');
 	});
 
 	it('checks the default comparator mechanism using objects', () => {
@@ -171,7 +171,7 @@ describe('store', () => {
 		expect(calls).to.eq(2);
 		store$.set(equalValue);
 		expect(calls).to.eq(2);
-		expect(store$.value).to.eq(equalValue);
+		expect(store$.content()).to.eq(equalValue);
 	});
 
 	it('checks the comparator mechanism using a custom function', () => {
@@ -186,8 +186,8 @@ describe('store', () => {
 		store$.set(equalValue);
 		expect(calls).to.eq(1);
 
-		expect(store$.value).to.not.eq(equalValue);
-		expect(store$.value).to.eq(initial);
+		expect(store$.content()).to.not.eq(equalValue);
+		expect(store$.content()).to.eq(initial);
 
 		store$.set({some: 'property!'});
 		expect(calls).to.eq(2);

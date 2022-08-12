@@ -5,7 +5,7 @@ const appDiv = document.getElementById('app') as HTMLDivElement;
 
 const random1$ = makeStore(0);
 const random2$ = makeStore(0);
-const sum$ = makeDerivedStore([random1$, random2$], ([r1, r2]) => r1 + r2);
+const sum$ = makeDerivedStore({r1: random1$, r2: random2$}, ({r1, r2}) => r1 + r2);
 
 const span1 = document.createElement('span');
 appDiv.appendChild(span1);
