@@ -50,6 +50,29 @@ export function makeDerivedStore<TIn, TOut>(
  * ```ts
  * const source1$ = makeStore(10);
  * const source2$ = makeStore(-10);
+ * const derived$ = makeDerivedStore([source1$, source2$], ([v1, v2]) => v1 + v2);
+ * source1$.subscribe((v) => console.log(v)); // prints 10
+ * source2$.subscribe((v) => console.log(v)); // prints -10
+ * derived$.subscribe((v) => console.log(v)); // prints 0
+ * source1$.set(11); // prints 11 (first console.log) and 1 (third console.log)
+ * source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
+ * ```
+ * @param readonlyStores an array of stores or readonly stores.
+ * @param map a function that takes the current value of all the source stores and maps it to another value.
+ */
+export function makeDerivedStore<TIn extends [] | [unknown, ...unknown[]], TOut>(
+	readonlyStores2: {[K in keyof TIn]: ReadonlyStore<TIn[K]>},
+	map: (value: {[K in keyof TIn]: TIn[K]} & unknown[]) => TOut,
+	config?: DerivedStoreConfig<TOut>,
+): ReadonlyStore<TOut>;
+
+/**
+ * Create a derived store from multiple sources.
+ *
+ * Example usage:
+ * ```ts
+ * const source1$ = makeStore(10);
+ * const source2$ = makeStore(-10);
  * const derived$ = makeDerivedStore({v1: source1$, v2: source2$}, ({v1, v2}) => v1 + v2);
  * source1$.subscribe((v) => console.log(v)); // prints 10
  * source2$.subscribe((v) => console.log(v)); // prints -10

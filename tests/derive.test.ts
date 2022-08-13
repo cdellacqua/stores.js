@@ -223,10 +223,10 @@ describe('derived store', () => {
 
 	it('tests that makeDerivedStore also accepts an array', () => {
 		const source1$ = makeStore('hello');
-		const source2$ = makeStore('world!');
+		const source2$ = makeStore({word: 'world!'});
 		const derived$ = makeDerivedStore(
 			[source1$, source2$],
-			([first, second]) => first + ' ' + second,
+			([first, second]) => first + ' ' + second.word,
 		);
 		expect(derived$.content()).to.eq('hello world!');
 		expect(derived$.nOfSubscriptions()).to.eq(0);

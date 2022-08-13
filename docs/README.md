@@ -422,6 +422,45 @@ source$.set(16); // triggers both console.logs, printing 16 and 32
 
 [composition.ts:40](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L40)
 
+▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStores2`, `map`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
+
+Create a derived store from multiple sources.
+
+Example usage:
+```ts
+const source1$ = makeStore(10);
+const source2$ = makeStore(-10);
+const derived$ = makeDerivedStore([source1$, source2$], ([v1, v2]) => v1 + v2);
+source1$.subscribe((v) => console.log(v)); // prints 10
+source2$.subscribe((v) => console.log(v)); // prints -10
+derived$.subscribe((v) => console.log(v)); // prints 0
+source1$.set(11); // prints 11 (first console.log) and 1 (third console.log)
+source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
+```
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `TIn` | extends [] \| [`unknown`, ...unknown[]] |
+| `TOut` | `TOut` |
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `readonlyStores2` | { [K in string \| number \| symbol]: ReadonlyStore<TIn[K]\> } | - |
+| `map` | (`value`: { [K in string \| number \| symbol]: TIn[K] } & `unknown`[]) => `TOut` | a function that takes the current value of all the source stores and maps it to another value. |
+| `config?` | [`DerivedStoreConfig`](README.md#derivedstoreconfig)<`TOut`\> | - |
+
+#### Returns
+
+[`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
+
+#### Defined in
+
+[composition.ts:63](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L63)
+
 ▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStores`, `map`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
 
 Create a derived store from multiple sources.
@@ -459,7 +498,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 #### Defined in
 
-[composition.ts:63](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L63)
+[composition.ts:86](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L86)
 
 ___
 
