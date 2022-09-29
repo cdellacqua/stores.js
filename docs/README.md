@@ -442,7 +442,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 | Name | Type |
 | :------ | :------ |
-| `TIn` | extends [] \| [`unknown`, ...unknown[]] |
+| `TIn` | extends `unknown`[] \| [`unknown`, ...unknown[]] |
 | `TOut` | `TOut` |
 
 #### Parameters
@@ -450,7 +450,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `readonlyStores` | { [K in string \| number \| symbol]: ReadonlyStore<TIn[K]\> } | an array of stores or readonly stores. |
-| `map` | (`value`: { [K in string \| number \| symbol]: TIn[K] } & `unknown`[]) => `TOut` | a function that takes the current value of all the source stores and maps it to another value. |
+| `map` | (`value`: { [K in string \| number \| symbol]: TIn[K] }) => `TOut` | a function that takes the current value of all the source stores and maps it to another value. |
 | `config?` | [`DerivedStoreConfig`](README.md#derivedstoreconfig)<`TOut`\> | a [DerivedStoreConfig](README.md#derivedstoreconfig) which contains configuration information such as a value comparator to avoid needless notifications to subscribers. |
 
 #### Returns

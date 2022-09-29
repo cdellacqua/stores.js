@@ -243,4 +243,12 @@ describe('derived store', () => {
 		expect(derived$.content()).to.eq('hello');
 		expect(derived$.nOfSubscriptions()).to.eq(0);
 	});
+
+	it('tests the type inference of makeDerivedStore with a non-tuple array', () => {
+		const makeArray = (n: number) =>
+			new Array(n).fill(0).map((_, i) => makeReadonlyStore(i % 2 === 0 ? i : String(i)));
+		const derived$ = makeDerivedStore(makeArray(10), (arr) => arr.indexOf('9'));
+		expect(derived$.content()).to.eq(9);
+		expect(derived$.nOfSubscriptions()).to.eq(0);
+	});
 });

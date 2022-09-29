@@ -62,9 +62,9 @@ export function makeDerivedStore<TIn, TOut>(
  * @param map a function that takes the current value of all the source stores and maps it to another value.
  * @param config a {@link DerivedStoreConfig} which contains configuration information such as a value comparator to avoid needless notifications to subscribers.
  */
-export function makeDerivedStore<TIn extends [] | [unknown, ...unknown[]], TOut>(
+export function makeDerivedStore<TIn extends unknown[] | [unknown, ...unknown[]], TOut>(
 	readonlyStores: {[K in keyof TIn]: ReadonlyStore<TIn[K]>},
-	map: (value: {[K in keyof TIn]: TIn[K]} & unknown[]) => TOut,
+	map: (value: {[K in keyof TIn]: TIn[K]}) => TOut,
 	config?: DerivedStoreConfig<TOut>,
 ): ReadonlyStore<TOut>;
 
