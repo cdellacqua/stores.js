@@ -36,6 +36,7 @@ export type DerivedStoreConfig<T> = {
  * ```
  * @param readonlyStore a store or readonly store.
  * @param map a function that takes the current value of the source store and maps it to another value.
+ * @param config a {@link DerivedStoreConfig} which contains configuration information such as a value comparator to avoid needless notifications to subscribers.
  */
 export function makeDerivedStore<TIn, TOut>(
 	readonlyStore: ReadonlyStore<TIn>,
@@ -59,9 +60,10 @@ export function makeDerivedStore<TIn, TOut>(
  * ```
  * @param readonlyStores an array of stores or readonly stores.
  * @param map a function that takes the current value of all the source stores and maps it to another value.
+ * @param config a {@link DerivedStoreConfig} which contains configuration information such as a value comparator to avoid needless notifications to subscribers.
  */
 export function makeDerivedStore<TIn extends [] | [unknown, ...unknown[]], TOut>(
-	readonlyStores2: {[K in keyof TIn]: ReadonlyStore<TIn[K]>},
+	readonlyStores: {[K in keyof TIn]: ReadonlyStore<TIn[K]>},
 	map: (value: {[K in keyof TIn]: TIn[K]} & unknown[]) => TOut,
 	config?: DerivedStoreConfig<TOut>,
 ): ReadonlyStore<TOut>;
@@ -82,6 +84,7 @@ export function makeDerivedStore<TIn extends [] | [unknown, ...unknown[]], TOut>
  * ```
  * @param readonlyStores an array of stores or readonly stores.
  * @param map a function that takes the current value of all the source stores and maps it to another value.
+ * @param config a {@link DerivedStoreConfig} which contains configuration information such as a value comparator to avoid needless notifications to subscribers.
  */
 export function makeDerivedStore<TIn, TOut>(
 	readonlyStores: {[K in keyof TIn]: ReadonlyStore<TIn[K]>},

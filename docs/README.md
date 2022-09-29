@@ -412,7 +412,7 @@ source$.set(16); // triggers both console.logs, printing 16 and 32
 | :------ | :------ | :------ |
 | `readonlyStore` | [`ReadonlyStore`](README.md#readonlystore)<`TIn`\> | a store or readonly store. |
 | `map` | (`value`: `TIn`) => `TOut` | a function that takes the current value of the source store and maps it to another value. |
-| `config?` | [`DerivedStoreConfig`](README.md#derivedstoreconfig)<`TOut`\> | - |
+| `config?` | [`DerivedStoreConfig`](README.md#derivedstoreconfig)<`TOut`\> | a [DerivedStoreConfig](README.md#derivedstoreconfig) which contains configuration information such as a value comparator to avoid needless notifications to subscribers. |
 
 #### Returns
 
@@ -420,9 +420,9 @@ source$.set(16); // triggers both console.logs, printing 16 and 32
 
 #### Defined in
 
-[composition.ts:40](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L40)
+[composition.ts:41](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L41)
 
-▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStores2`, `map`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
+▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStores`, `map`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
 
 Create a derived store from multiple sources.
 
@@ -449,9 +449,9 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `readonlyStores2` | { [K in string \| number \| symbol]: ReadonlyStore<TIn[K]\> } | - |
+| `readonlyStores` | { [K in string \| number \| symbol]: ReadonlyStore<TIn[K]\> } | an array of stores or readonly stores. |
 | `map` | (`value`: { [K in string \| number \| symbol]: TIn[K] } & `unknown`[]) => `TOut` | a function that takes the current value of all the source stores and maps it to another value. |
-| `config?` | [`DerivedStoreConfig`](README.md#derivedstoreconfig)<`TOut`\> | - |
+| `config?` | [`DerivedStoreConfig`](README.md#derivedstoreconfig)<`TOut`\> | a [DerivedStoreConfig](README.md#derivedstoreconfig) which contains configuration information such as a value comparator to avoid needless notifications to subscribers. |
 
 #### Returns
 
@@ -459,7 +459,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 #### Defined in
 
-[composition.ts:63](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L63)
+[composition.ts:65](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L65)
 
 ▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStores`, `map`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
 
@@ -490,7 +490,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 | :------ | :------ | :------ |
 | `readonlyStores` | { [K in string \| number \| symbol]: ReadonlyStore<TIn[K]\> } | an array of stores or readonly stores. |
 | `map` | (`value`: { [K in string \| number \| symbol]: TIn[K] }) => `TOut` | a function that takes the current value of all the source stores and maps it to another value. |
-| `config?` | [`DerivedStoreConfig`](README.md#derivedstoreconfig)<`TOut`\> | - |
+| `config?` | [`DerivedStoreConfig`](README.md#derivedstoreconfig)<`TOut`\> | a [DerivedStoreConfig](README.md#derivedstoreconfig) which contains configuration information such as a value comparator to avoid needless notifications to subscribers. |
 
 #### Returns
 
@@ -498,7 +498,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 #### Defined in
 
-[composition.ts:86](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L86)
+[composition.ts:89](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L89)
 
 ___
 
