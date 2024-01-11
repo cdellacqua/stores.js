@@ -2,7 +2,7 @@
 	"name": "universal-stores",
 	"camelCaseName": "universalStores",
 	"description": "State management made simple",
-	"version": "2.2.0",
+	"version": "2.3.0",
 	"type": "module",
 	"types": "dist/index.d.ts",
 	"main": "dist/index.cjs",
@@ -21,10 +21,12 @@
 		"url": "https://github.com/cdellacqua/stores.js/issues"
 	},
 	"homepage": "https://github.com/cdellacqua/stores.js",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"exports": {
 		".": {
-      "types": "./dist/index.d.ts",
+			"types": "./dist/index.d.ts",
 			"import": "./dist/index.es.js",
 			"require": "./dist/index.cjs"
 		},
