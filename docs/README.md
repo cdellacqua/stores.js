@@ -9,8 +9,10 @@ universal-stores
 - [DerivedStoreConfig](README.md#derivedstoreconfig)
 - [EqualityComparator](README.md#equalitycomparator)
 - [Getter](README.md#getter)
+- [ReadonlySignal](README.md#readonlysignal)
 - [ReadonlyStore](README.md#readonlystore)
 - [Setter](README.md#setter)
+- [Signal](README.md#signal)
 - [StartHandler](README.md#starthandler)
 - [StopHandler](README.md#stophandler)
 - [Store](README.md#store)
@@ -22,8 +24,11 @@ universal-stores
 
 ### Functions
 
+- [coalesceSignals](README.md#coalescesignals)
+- [deriveSignal](README.md#derivesignal)
 - [makeDerivedStore](README.md#makederivedstore)
 - [makeReadonlyStore](README.md#makereadonlystore)
+- [makeSignal](README.md#makesignal)
 - [makeStore](README.md#makestore)
 
 ## Type Aliases
@@ -48,7 +53,7 @@ Configurations for derived stores.
 
 #### Defined in
 
-[composition.ts:18](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L18)
+[src/lib/composition.ts:18](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L18)
 
 ___
 
@@ -81,7 +86,7 @@ A comparison function used to optimize subscribers notifications. Used in [Store
 
 #### Defined in
 
-[index.ts:28](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L28)
+[src/lib/index.ts:26](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L26)
 
 ___
 
@@ -107,7 +112,33 @@ A generic getter function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[index.ts:22](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L22)
+[src/lib/index.ts:20](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L20)
+
+___
+
+### ReadonlySignal
+
+Ƭ **ReadonlySignal**<`T`\>: `Object`
+
+A signal that can have subscribers and emit values to them.
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `nOfSubscriptions` | () => `number` |
+| `subscribe` | (`subscriber`: [`Subscriber`](README.md#subscriber)<`T`\>) => [`Unsubscribe`](README.md#unsubscribe) |
+| `subscribeOnce` | (`subscriber`: [`Subscriber`](README.md#subscriber)<`T`\>) => [`Unsubscribe`](README.md#unsubscribe) |
+
+#### Defined in
+
+node_modules/@cdellacqua/signals/dist/index.d.ts:6
 
 ___
 
@@ -136,7 +167,7 @@ therefore its value can only be changed by a [StartHandler](README.md#starthandl
 
 #### Defined in
 
-[index.ts:40](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L40)
+[src/lib/index.ts:38](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L38)
 
 ___
 
@@ -168,7 +199,25 @@ A generic setter function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[index.ts:20](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L20)
+[src/lib/index.ts:18](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L18)
+
+___
+
+### Signal
+
+Ƭ **Signal**<`T`\>: [`ReadonlySignal`](README.md#readonlysignal)<`T`\> & { `emit`: (`v`: `T`) => `void`  }
+
+A signal that can have subscribers and emit values to them.
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Defined in
+
+node_modules/@cdellacqua/signals/dist/index.d.ts:28
 
 ___
 
@@ -200,7 +249,7 @@ A function that gets called once a store gets at least one subscriber. Used in [
 
 #### Defined in
 
-[index.ts:32](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L32)
+[src/lib/index.ts:30](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L30)
 
 ___
 
@@ -220,7 +269,7 @@ A function that gets called once a store reaches 0 subscribers. Used in [Store](
 
 #### Defined in
 
-[index.ts:30](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L30)
+[src/lib/index.ts:28](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L28)
 
 ___
 
@@ -239,7 +288,7 @@ provides the current value upon subscription.
 
 #### Defined in
 
-[index.ts:64](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L64)
+[src/lib/index.ts:62](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L62)
 
 ___
 
@@ -264,7 +313,7 @@ Configurations for Store<T> and ReadonlyStore<T>.
 
 #### Defined in
 
-[index.ts:81](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L81)
+[src/lib/index.ts:79](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L79)
 
 ___
 
@@ -282,7 +331,7 @@ ___
 
 ▸ (`current`): `void`
 
-A generic subscriber. Used in [Store](README.md#store)
+A generic subscriber that takes a value emitted by a signal as its only parameter.
 
 ##### Parameters
 
@@ -296,7 +345,7 @@ A generic subscriber. Used in [Store](README.md#store)
 
 #### Defined in
 
-[index.ts:16](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L16)
+node_modules/@cdellacqua/signals/dist/index.d.ts:2
 
 ___
 
@@ -308,7 +357,7 @@ ___
 
 ▸ (): `void`
 
-A function that's used to unsubscribe a subscriber from a store. Used in [Store](README.md#store)
+A function that's used to unsubscribe a subscriber from a signal.
 
 ##### Returns
 
@@ -316,7 +365,7 @@ A function that's used to unsubscribe a subscriber from a store. Used in [Store]
 
 #### Defined in
 
-[index.ts:18](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L18)
+node_modules/@cdellacqua/signals/dist/index.d.ts:4
 
 ___
 
@@ -348,7 +397,7 @@ A generic update function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[index.ts:26](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L26)
+[src/lib/index.ts:24](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L24)
 
 ___
 
@@ -380,9 +429,92 @@ A generic updater function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[index.ts:24](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L24)
+[src/lib/index.ts:22](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L22)
 
 ## Functions
+
+### coalesceSignals
+
+▸ **coalesceSignals**<`T`\>(`signals$`): [`ReadonlySignal`](README.md#readonlysignal)<`T`[`number`]\>
+
+Coalesce multiple signals into one that will emit the latest value emitted
+by any of the source signals.
+
+Example:
+```ts
+const lastUpdate1$ = makeSignal<number>();
+const lastUpdate2$ = makeSignal<number>();
+const latestUpdate$ = coalesceSignals([lastUpdate1$, lastUpdate2$]);
+latestUpdate$.subscribe((v) => console.log(v));
+lastUpdate1$.emit(1577923200000); // will log 1577923200000
+lastUpdate2$.emit(1653230659450); // will log 1653230659450
+```
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends `unknown`[] |
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `signals$` | { [P in string \| number \| symbol]: ReadonlySignal<T[P]\> } | an array of signals to observe. |
+
+#### Returns
+
+[`ReadonlySignal`](README.md#readonlysignal)<`T`[`number`]\>
+
+a new signal that emits whenever one of the source signals emits.
+
+#### Defined in
+
+node_modules/@cdellacqua/signals/dist/composition.d.ts:35
+
+___
+
+### deriveSignal
+
+▸ **deriveSignal**<`T`, `U`\>(`signal$`, `transform`): [`ReadonlySignal`](README.md#readonlysignal)<`U`\>
+
+Create a signal that emits whenever the passed signal emits. The original
+emitted value gets transformed by the passed function and the result gets
+emitted.
+
+Example:
+```ts
+const signal$ = makeSignal<number>();
+const derived$ = deriveSignal(signal$, (n) => n + 100);
+derived$.subscribe((v) => console.log(v));
+signal$.emit(3); // will trigger console.log, echoing 103
+```
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+| `U` |
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `signal$` | [`ReadonlySignal`](README.md#readonlysignal)<`T`\> | a signal. |
+| `transform` | (`data`: `T`) => `U` | a transformation function. |
+
+#### Returns
+
+[`ReadonlySignal`](README.md#readonlysignal)<`U`\>
+
+a new signal that will emit the transformed data.
+
+#### Defined in
+
+node_modules/@cdellacqua/signals/dist/composition.d.ts:18
+
+___
 
 ### makeDerivedStore
 
@@ -420,7 +552,7 @@ source$.set(16); // triggers both console.logs, printing 16 and 32
 
 #### Defined in
 
-[composition.ts:41](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L41)
+[src/lib/composition.ts:41](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L41)
 
 ▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStores`, `map`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
 
@@ -459,7 +591,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 #### Defined in
 
-[composition.ts:65](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L65)
+[src/lib/composition.ts:65](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L65)
 
 ▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStores`, `map`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
 
@@ -498,7 +630,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 #### Defined in
 
-[composition.ts:89](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L89)
+[src/lib/composition.ts:89](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L89)
 
 ___
 
@@ -541,7 +673,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[index.ts:231](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L231)
+[src/lib/index.ts:229](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L229)
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
 
@@ -578,7 +710,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[index.ts:252](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L252)
+[src/lib/index.ts:250](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L250)
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `startOrConfig?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
 
@@ -617,7 +749,42 @@ a ReadonlyStore
 
 #### Defined in
 
-[index.ts:275](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L275)
+[src/lib/index.ts:273](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L273)
+
+___
+
+### makeSignal
+
+▸ **makeSignal**<`T`\>(): [`Signal`](README.md#signal)<`T`\>
+
+Make a signal of type T.
+
+Example usage:
+```ts
+const signal$ = makeSignal<number>();
+signal$.emit(10);
+```
+Example usage with no data:
+```ts
+const signal$ = makeSignal<void>();
+signal$.emit();
+```
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Returns
+
+[`Signal`](README.md#signal)<`T`\>
+
+a signal.
+
+#### Defined in
+
+node_modules/@cdellacqua/signals/dist/index.d.ts:50
 
 ___
 
@@ -656,7 +823,7 @@ a Store
 
 #### Defined in
 
-[index.ts:105](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L105)
+[src/lib/index.ts:103](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L103)
 
 ▸ **makeStore**<`T`\>(`initialValue`, `config?`): [`Store`](README.md#store)<`T`\>
 
@@ -691,7 +858,7 @@ a Store
 
 #### Defined in
 
-[index.ts:121](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L121)
+[src/lib/index.ts:119](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L119)
 
 ▸ **makeStore**<`T`\>(`initialValue`, `startOrConfig?`): [`Store`](README.md#store)<`T`\>
 
@@ -726,4 +893,4 @@ a Store
 
 #### Defined in
 
-[index.ts:137](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L137)
+[src/lib/index.ts:135](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L135)

@@ -10,12 +10,10 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import {makeSignal} from '@cdellacqua/signals';
+import {makeSignal, Subscriber, Unsubscribe} from '@cdellacqua/signals';
 
-/** A generic subscriber. Used in {@link Store} */
-export type Subscriber<T> = (current: T) => void;
-/** A function that's used to unsubscribe a subscriber from a store. Used in {@link Store} */
-export type Unsubscribe = () => void;
+export * from '@cdellacqua/signals';
+
 /** A generic setter function. Used in {@link Store} */
 export type Setter<T> = (newValue: T) => void;
 /** A generic getter function. Used in {@link Store} */
