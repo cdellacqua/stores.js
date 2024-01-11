@@ -21,11 +21,10 @@
 		"url": "https://github.com/cdellacqua/stores.js/issues"
 	},
 	"homepage": "https://github.com/cdellacqua/stores.js",
-	"files": [
-		"dist/**/*"
-	],
+	"files": ["dist"],
 	"exports": {
 		".": {
+      "types": "./dist/index.d.ts",
 			"import": "./dist/index.es.js",
 			"require": "./dist/index.cjs"
 		},
