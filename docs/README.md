@@ -9,10 +9,8 @@ universal-stores
 - [DerivedStoreConfig](README.md#derivedstoreconfig)
 - [EqualityComparator](README.md#equalitycomparator)
 - [Getter](README.md#getter)
-- [ReadonlySignal](README.md#readonlysignal)
 - [ReadonlyStore](README.md#readonlystore)
 - [Setter](README.md#setter)
-- [Signal](README.md#signal)
 - [StartHandler](README.md#starthandler)
 - [StopHandler](README.md#stophandler)
 - [Store](README.md#store)
@@ -24,11 +22,8 @@ universal-stores
 
 ### Functions
 
-- [coalesceSignals](README.md#coalescesignals)
-- [deriveSignal](README.md#derivesignal)
 - [makeDerivedStore](README.md#makederivedstore)
 - [makeReadonlyStore](README.md#makereadonlystore)
-- [makeSignal](README.md#makesignal)
 - [makeStore](README.md#makestore)
 
 ## Type Aliases
@@ -116,32 +111,6 @@ A generic getter function. Used in [Store](README.md#store)
 
 ___
 
-### ReadonlySignal
-
-Ƭ **ReadonlySignal**<`T`\>: `Object`
-
-A signal that can have subscribers and emit values to them.
-
-#### Type parameters
-
-| Name |
-| :------ |
-| `T` |
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `nOfSubscriptions` | () => `number` |
-| `subscribe` | (`subscriber`: [`Subscriber`](README.md#subscriber)<`T`\>) => [`Unsubscribe`](README.md#unsubscribe) |
-| `subscribeOnce` | (`subscriber`: [`Subscriber`](README.md#subscriber)<`T`\>) => [`Unsubscribe`](README.md#unsubscribe) |
-
-#### Defined in
-
-node_modules/@cdellacqua/signals/dist/index.d.ts:6
-
-___
-
 ### ReadonlyStore
 
 Ƭ **ReadonlyStore**<`T`\>: `Object`
@@ -200,24 +169,6 @@ A generic setter function. Used in [Store](README.md#store)
 #### Defined in
 
 [src/lib/index.ts:18](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L18)
-
-___
-
-### Signal
-
-Ƭ **Signal**<`T`\>: [`ReadonlySignal`](README.md#readonlysignal)<`T`\> & { `emit`: (`v`: `T`) => `void`  }
-
-A signal that can have subscribers and emit values to them.
-
-#### Type parameters
-
-| Name |
-| :------ |
-| `T` |
-
-#### Defined in
-
-node_modules/@cdellacqua/signals/dist/index.d.ts:28
 
 ___
 
@@ -432,89 +383,6 @@ A generic updater function. Used in [Store](README.md#store)
 [src/lib/index.ts:22](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L22)
 
 ## Functions
-
-### coalesceSignals
-
-▸ **coalesceSignals**<`T`\>(`signals$`): [`ReadonlySignal`](README.md#readonlysignal)<`T`[`number`]\>
-
-Coalesce multiple signals into one that will emit the latest value emitted
-by any of the source signals.
-
-Example:
-```ts
-const lastUpdate1$ = makeSignal<number>();
-const lastUpdate2$ = makeSignal<number>();
-const latestUpdate$ = coalesceSignals([lastUpdate1$, lastUpdate2$]);
-latestUpdate$.subscribe((v) => console.log(v));
-lastUpdate1$.emit(1577923200000); // will log 1577923200000
-lastUpdate2$.emit(1653230659450); // will log 1653230659450
-```
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `T` | extends `unknown`[] |
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `signals$` | { [P in string \| number \| symbol]: ReadonlySignal<T[P]\> } | an array of signals to observe. |
-
-#### Returns
-
-[`ReadonlySignal`](README.md#readonlysignal)<`T`[`number`]\>
-
-a new signal that emits whenever one of the source signals emits.
-
-#### Defined in
-
-node_modules/@cdellacqua/signals/dist/composition.d.ts:35
-
-___
-
-### deriveSignal
-
-▸ **deriveSignal**<`T`, `U`\>(`signal$`, `transform`): [`ReadonlySignal`](README.md#readonlysignal)<`U`\>
-
-Create a signal that emits whenever the passed signal emits. The original
-emitted value gets transformed by the passed function and the result gets
-emitted.
-
-Example:
-```ts
-const signal$ = makeSignal<number>();
-const derived$ = deriveSignal(signal$, (n) => n + 100);
-derived$.subscribe((v) => console.log(v));
-signal$.emit(3); // will trigger console.log, echoing 103
-```
-
-#### Type parameters
-
-| Name |
-| :------ |
-| `T` |
-| `U` |
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `signal$` | [`ReadonlySignal`](README.md#readonlysignal)<`T`\> | a signal. |
-| `transform` | (`data`: `T`) => `U` | a transformation function. |
-
-#### Returns
-
-[`ReadonlySignal`](README.md#readonlysignal)<`U`\>
-
-a new signal that will emit the transformed data.
-
-#### Defined in
-
-node_modules/@cdellacqua/signals/dist/composition.d.ts:18
-
-___
 
 ### makeDerivedStore
 
@@ -750,41 +618,6 @@ a ReadonlyStore
 #### Defined in
 
 [src/lib/index.ts:273](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L273)
-
-___
-
-### makeSignal
-
-▸ **makeSignal**<`T`\>(): [`Signal`](README.md#signal)<`T`\>
-
-Make a signal of type T.
-
-Example usage:
-```ts
-const signal$ = makeSignal<number>();
-signal$.emit(10);
-```
-Example usage with no data:
-```ts
-const signal$ = makeSignal<void>();
-signal$.emit();
-```
-
-#### Type parameters
-
-| Name |
-| :------ |
-| `T` |
-
-#### Returns
-
-[`Signal`](README.md#signal)<`T`\>
-
-a signal.
-
-#### Defined in
-
-node_modules/@cdellacqua/signals/dist/index.d.ts:50
 
 ___
 
