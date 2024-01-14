@@ -12,7 +12,7 @@
 
 import {makeSignal, Subscriber, Unsubscribe} from '@cdellacqua/signals';
 
-export * from '@cdellacqua/signals';
+export type {Subscriber, Unsubscribe} from '@cdellacqua/signals';
 
 /** A generic setter function. Used in {@link Store} */
 export type Setter<T> = (newValue: T) => void;
