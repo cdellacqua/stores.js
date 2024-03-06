@@ -164,7 +164,7 @@ export function makeStore<T>(
 		(typeof startOrConfig === 'function' ? undefined : startOrConfig?.comparator) ??
 		((a, b) => a === b);
 
-	const get = () => {
+	const content = () => {
 		if (signal.nOfSubscriptions() > 0) {
 			return mutableValue as T;
 		}
@@ -196,11 +196,11 @@ export function makeStore<T>(
 		};
 	};
 	const update = (updater: (current: T) => T) => {
-		set(updater(get()));
+		set(updater(content()));
 	};
 
 	return {
-		content: get,
+		content,
 		set,
 		subscribe,
 		update,
