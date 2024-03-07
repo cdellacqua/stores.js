@@ -8,6 +8,7 @@ universal-stores
 
 - [BatchingEffectError](classes/BatchingEffectError.md)
 - [MissingEffectError](classes/MissingEffectError.md)
+- [NestedEffectError](classes/NestedEffectError.md)
 - [ReactiveRootDisposeError](classes/ReactiveRootDisposeError.md)
 
 ### Type Aliases
