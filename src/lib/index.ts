@@ -6,5 +6,6 @@ export {
 	batchEffects,
 	makeReactiveRoot,
 	BatchingEffectError,
+	NestedEffectError,
 	type ReactiveRoot,
 } from './effect';
