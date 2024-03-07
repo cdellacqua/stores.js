@@ -4,11 +4,18 @@ universal-stores
 
 ## Table of contents
 
+### Classes
+
+- [BatchingEffectError](classes/BatchingEffectError.md)
+- [MissingEffectError](classes/MissingEffectError.md)
+- [ReactiveRootDisposeError](classes/ReactiveRootDisposeError.md)
+
 ### Type Aliases
 
 - [DerivedStoreConfig](README.md#derivedstoreconfig)
 - [EqualityComparator](README.md#equalitycomparator)
 - [Getter](README.md#getter)
+- [ReactiveRoot](README.md#reactiveroot)
 - [ReadonlyStore](README.md#readonlystore)
 - [Setter](README.md#setter)
 - [StartHandler](README.md#starthandler)
@@ -22,7 +29,9 @@ universal-stores
 
 ### Functions
 
+- [batchEffects](README.md#batcheffects)
 - [makeDerivedStore](README.md#makederivedstore)
+- [makeReactiveRoot](README.md#makereactiveroot)
 - [makeReadonlyStore](README.md#makereadonlystore)
 - [makeStore](README.md#makestore)
 
@@ -81,7 +90,7 @@ A comparison function used to optimize subscribers notifications. Used in [Store
 
 #### Defined in
 
-[src/lib/index.ts:26](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L26)
+[src/lib/store.ts:27](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L27)
 
 ___
 
@@ -107,7 +116,28 @@ A generic getter function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[src/lib/index.ts:20](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L20)
+[src/lib/store.ts:21](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L21)
+
+___
+
+### ReactiveRoot
+
+Ƭ **ReactiveRoot**: `Object`
+
+A reactive root provides a scope for all the effect it contains.
+This scope can then be destroyed (and all the effect cleaned up) by calling
+the dispose method.
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `dispose` | () => `void` |
+| `makeEffect` | (`fn`: () => `void` \| () => `void`) => `void` |
+
+#### Defined in
+
+[src/lib/effect.ts:86](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L86)
 
 ___
 
@@ -133,10 +163,11 @@ therefore its value can only be changed by a [StartHandler](README.md#starthandl
 | `content` | () => `T` |
 | `nOfSubscriptions` | () => `number` |
 | `subscribe` | (`subscriber`: [`Subscriber`](README.md#subscriber)<`T`\>) => [`Unsubscribe`](README.md#unsubscribe) |
+| `watch` | () => `T` |
 
 #### Defined in
 
-[src/lib/index.ts:38](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L38)
+[src/lib/store.ts:39](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L39)
 
 ___
 
@@ -168,7 +199,7 @@ A generic setter function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[src/lib/index.ts:18](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L18)
+[src/lib/store.ts:19](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L19)
 
 ___
 
@@ -200,7 +231,7 @@ A function that gets called once a store gets at least one subscriber. Used in [
 
 #### Defined in
 
-[src/lib/index.ts:30](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L30)
+[src/lib/store.ts:31](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L31)
 
 ___
 
@@ -220,7 +251,7 @@ A function that gets called once a store reaches 0 subscribers. Used in [Store](
 
 #### Defined in
 
-[src/lib/index.ts:28](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L28)
+[src/lib/store.ts:29](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L29)
 
 ___
 
@@ -239,7 +270,7 @@ provides the current value upon subscription.
 
 #### Defined in
 
-[src/lib/index.ts:62](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L62)
+[src/lib/store.ts:83](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L83)
 
 ___
 
@@ -264,7 +295,7 @@ Configurations for Store<T> and ReadonlyStore<T>.
 
 #### Defined in
 
-[src/lib/index.ts:79](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L79)
+[src/lib/store.ts:100](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L100)
 
 ___
 
@@ -348,7 +379,7 @@ A generic update function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[src/lib/index.ts:24](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L24)
+[src/lib/store.ts:25](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L25)
 
 ___
 
@@ -380,9 +411,35 @@ A generic updater function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[src/lib/index.ts:22](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L22)
+[src/lib/store.ts:23](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L23)
 
 ## Functions
+
+### batchEffects
+
+▸ **batchEffects**(`action`): `void`
+
+Run the passed function, enqueueing and deduplicating the effects it may trigger, in order to
+run them just at the end to avoid "glitches".
+
+NOTE: batchEffects can be nested, all updates will automatically be accumulated in the outmost "batch" before
+the effects are executed.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `action` | () => `void` | A function that directly or indirectly updates one or more stores. |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/lib/effect.ts:164](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L164)
+
+___
 
 ### makeDerivedStore
 
@@ -502,6 +559,22 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 ___
 
+### makeReactiveRoot
+
+▸ **makeReactiveRoot**(): [`ReactiveRoot`](README.md#reactiveroot)
+
+Create a [ReactiveRoot](README.md#reactiveroot), providing a makeEffect and a dispose function.
+
+#### Returns
+
+[`ReactiveRoot`](README.md#reactiveroot)
+
+#### Defined in
+
+[src/lib/effect.ts:105](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L105)
+
+___
+
 ### makeReadonlyStore
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `start?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
@@ -541,7 +614,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[src/lib/index.ts:229](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L229)
+[src/lib/store.ts:251](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L251)
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
 
@@ -578,7 +651,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[src/lib/index.ts:250](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L250)
+[src/lib/store.ts:272](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L272)
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `startOrConfig?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
 
@@ -617,7 +690,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[src/lib/index.ts:273](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L273)
+[src/lib/store.ts:295](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L295)
 
 ___
 
@@ -656,7 +729,7 @@ a Store
 
 #### Defined in
 
-[src/lib/index.ts:103](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L103)
+[src/lib/store.ts:124](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L124)
 
 ▸ **makeStore**<`T`\>(`initialValue`, `config?`): [`Store`](README.md#store)<`T`\>
 
@@ -691,7 +764,7 @@ a Store
 
 #### Defined in
 
-[src/lib/index.ts:119](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L119)
+[src/lib/store.ts:140](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L140)
 
 ▸ **makeStore**<`T`\>(`initialValue`, `startOrConfig?`): [`Store`](README.md#store)<`T`\>
 
@@ -726,4 +799,4 @@ a Store
 
 #### Defined in
 
-[src/lib/index.ts:135](https://github.com/cdellacqua/stores.js/blob/main/src/lib/index.ts#L135)
+[src/lib/store.ts:156](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L156)

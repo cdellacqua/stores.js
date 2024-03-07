@@ -1,5 +1,12 @@
 import {expect} from 'chai';
-import {makeDerivedStore, makeReadonlyStore, makeStore, ReadonlyStore} from '../src/lib';
+import {
+	batchEffects,
+	makeDerivedStore,
+	makeReactiveRoot,
+	makeReadonlyStore,
+	makeStore,
+	ReadonlyStore,
+} from '../src/lib';
 
 describe('examples', () => {
 	it('readme 1', () => {
@@ -229,8 +236,9 @@ describe('examples', () => {
 
 	it('readme destructuring', () => {
 		function makeCounterStore(): ReadonlyStore<number> & {increment(): void} {
-			const {subscribe, content, update, nOfSubscriptions} = makeStore(0);
+			const {subscribe, content, update, nOfSubscriptions, watch} = makeStore(0);
 			return {
+				watch,
 				subscribe,
 				content,
 				nOfSubscriptions,
@@ -270,5 +278,109 @@ describe('examples', () => {
 		// const derived$ = makeDerivedStore({v1: source1$, v2: source2$}, ({v1, v2, v3}) => v1 + v2 + v3);
 		const derived$ = makeDerivedStore({v1: source1$, v2: source2$}, ({v1, v2}) => v1 + v2);
 		expect(derived$.content()).to.eq(9); // 9, because the computation above would resolve to 6 + 3
+	});
+
+	it('readme effect basic', () => {
+		const {makeEffect, dispose} = makeReactiveRoot();
+		const store$ = makeStore(1);
+		let actual = -1;
+		makeEffect(() => {
+			actual = store$.watch(); // immediately prints 1
+		});
+		expect(actual).to.eq(1);
+		store$.set(2); // makes the effect above print 2
+		expect(actual).to.eq(2);
+		dispose();
+		expect(actual).to.eq(2);
+	});
+
+	it('readme effect with cleanup', () => {
+		const {makeEffect, dispose} = makeReactiveRoot();
+
+		let actual = -1;
+		let clearCount = 0;
+		const store$ = makeStore(1);
+		makeEffect(() => {
+			actual = store$.watch(); // immediately prints 1
+
+			return () => clearCount++;
+		});
+		expect(actual).to.eq(1);
+		expect(clearCount).to.eq(0);
+		store$.set(2); // makes the effect above clean the console, then print 2
+		expect(actual).to.eq(2);
+		expect(clearCount).to.eq(1);
+		dispose(); // cleans the console
+		expect(actual).to.eq(2);
+		expect(clearCount).to.eq(2);
+		store$.set(3); // does nothing, as the effect above has been unregistered
+		expect(actual).to.eq(2);
+		expect(clearCount).to.eq(2);
+	});
+
+	it('readme effect with batching [before]', () => {
+		const {makeEffect} = makeReactiveRoot();
+
+		let actual = '';
+		const greeting$ = makeStore('Hello');
+		const name$ = makeStore('John');
+		makeEffect(() => {
+			actual = `${greeting$.watch()}, ${name$.watch()}`; // immediately prints "Hello, John"
+		});
+		expect(actual).to.eq('Hello, John');
+
+		greeting$.set('Bye'); // prints "Bye, John"
+		expect(actual).to.eq('Bye, John');
+		name$.set('Jack'); // prints "Bye, Jack"
+		expect(actual).to.eq('Bye, Jack');
+	});
+
+	it('readme effect with batching [after]', () => {
+		const {makeEffect} = makeReactiveRoot();
+
+		let actual = '';
+		const greeting$ = makeStore('Hello');
+		const name$ = makeStore('John');
+		makeEffect(() => {
+			actual = `${greeting$.watch()}, ${name$.watch()}`; // immediately prints "Hello, John"
+		});
+		expect(actual).to.eq('Hello, John');
+
+		batchEffects(() => {
+			greeting$.set('Bye'); // doesn't trigger
+			expect(actual).to.eq('Hello, John');
+			name$.set('Jack'); // doesn't trigger
+			expect(actual).to.eq('Hello, John');
+		}); // triggers, printing "Bye, Jack"
+		expect(actual).to.eq('Bye, Jack');
+	});
+
+	it('readme effect with derived-like behaviour [before]', () => {
+		const {makeEffect} = makeReactiveRoot();
+
+		let actual = '';
+		const greeting$ = makeStore('Hello');
+		const name$ = makeStore('John');
+		makeEffect(() => {
+			actual = `${greeting$.watch()}, ${name$.watch()}`; // immediately prints "Hello, John"
+		});
+		expect(actual).to.eq('Hello, John');
+		greeting$.set('Bye'); // prints "Bye, John"
+		expect(actual).to.eq('Bye, John');
+	});
+
+	it('readme effect with derived-like behaviour [after]', () => {
+		const {makeEffect} = makeReactiveRoot();
+
+		let actual = '';
+		const greeting$ = makeStore('Hello');
+		const name$ = makeStore('John');
+		const greet = () => `${greeting$.watch()}, ${name$.watch()}`;
+		makeEffect(() => {
+			actual = greet(); // immediately prints "Hello, John"
+		});
+		expect(actual).to.eq('Hello, John');
+		greeting$.set('Bye'); // prints "Bye, John"
+		expect(actual).to.eq('Bye, John');
 	});
 });

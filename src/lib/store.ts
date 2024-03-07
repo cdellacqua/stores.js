@@ -11,6 +11,7 @@
  */
 
 import {makeSignal, Subscriber, Unsubscribe} from '@cdellacqua/signals';
+import {radioActiveContent} from './effect';
 
 export type {Subscriber, Unsubscribe} from '@cdellacqua/signals';
 
@@ -53,6 +54,26 @@ export type ReadonlyStore<T> = {
 	 * Get the current value wrapped by the store.
 	 */
 	content(): T;
+	/**
+	 * Get the current value wrapped by the store and register the current store as a dependency in the context of an effect.
+	 *
+	 * Example usage:
+	 * ```ts
+	 * import {makeReactiveRoot, makeStore} from 'universal-stores';
+	 *
+	 * const {makeEffect} = makeReactiveRoot();
+	 * const store$ = makeStore(1);
+	 * makeEffect(() => {
+	 * 	console.log(store$.watch()); // immediately prints 1
+	 * });
+	 * store$.set(2); // makes the effect above print 2
+	 * dispose();
+	 * store$.set(3); // does nothing, as the effect above has been unregistered
+	 * ```
+	 *
+	 * {@see file://./effect.d.ts}
+	 */
+	watch(): T;
 };
 
 /**
@@ -202,6 +223,7 @@ export function makeStore<T>(
 	return {
 		content,
 		set,
+		watch: () => radioActiveContent({content, subscribe}),
 		subscribe,
 		update,
 		nOfSubscriptions: signal.nOfSubscriptions,
@@ -279,11 +301,12 @@ export function makeReadonlyStore<T>(
 	initialValue: T | undefined,
 	startOrConfig?: StartHandler<T> | StoreConfig<T>,
 ): ReadonlyStore<T> {
-	const {content, nOfSubscriptions, subscribe} = makeStore(initialValue, startOrConfig);
+	const {content, nOfSubscriptions, subscribe, watch} = makeStore(initialValue, startOrConfig);
 
 	return {
 		content,
 		nOfSubscriptions,
 		subscribe,
+		watch,
 	};
 }

@@ -2,10 +2,13 @@
 
 State management made simple.
 
+**✨ with an integrated effect system ✨**
+
 Stores are a simple yet powerful way to manage an application
 state. Some examples of stores can be found in Svelte (e.g. writable, readable) and Solid.js (e.g. createSignal).
 
-This package provides a framework-agnostic implementation of this concept.
+This package provides a framework-agnostic implementation of this concept and a supporting effect system that can be used in conjunction with (or as an alternative to)
+explicit subscriptions.
 
 [NPM Package](https://www.npmjs.com/package/universal-stores)
 
@@ -26,8 +29,8 @@ A `Store<T>` is an object that provides the following methods:
 - `subscribe(subscriber)`, to attach subscribers;
 - `set(value)`, to update the current value of the store and send it to all subscribers;
 - `update(updater)`, to update the value using a function that takes the current one as an argument.
-
-There is also a getter `value` that retrieves the current value of the store:
+- `content()`, to retrieve the current content of a store.
+- `watch()`, to retrieve the current content of a store and register the store as a dependency of a running effect (more on this later).
 
 ```ts
 import {makeStore} from 'universal-stores';
@@ -91,8 +94,8 @@ unsubscribe1(); // won't do anything, "subscriber" has already been removed
 console.log(store$.nOfSubscriptions()); // 0
 ```
 
-If you ever needed to add the same function
-more than once you can still achieve that by simply wrapping it inside an arrow function:
+If you ever need to add the same function
+more than once you can still achieve this by simply wrapping it inside an arrow function:
 
 ```ts
 import {makeStore} from 'universal-stores';
@@ -281,12 +284,141 @@ counter$.subscribe(console.log); // immediately prints 0
 counter$.increment(); // will trigger the above console.log, printing 1
 ```
 
+## Effect system
+
+An "effect" is function that usually causes "side effects" (e.g. writing to the console, changing a DOM node, making an HTTP request, etc.) and that is tied to one or more stores
+in a semi-automatic manner.
+
+This package provides the following API for the effect system:
+
+- `makeReactiveRoot`, which instantiate an object containing `makeEffect` and `dispose`;
+  - `makeEffect`, the primitive that registers effects;
+  - `dispose`, a destructor for the reactive root that unregisters all effects, calling their cleanup functions (if present);
+- `batchEffects`, which enables "glitch-free" updates by enqueueing and deduplicating effects during multiple store updates;
+- `store$.watch()`, a method present in all readable stores similar to `.content()` that adds the store to the dependency list of an effect during a `makeEffect` call.
+
+In practice, effects look like this:
+
+```ts
+import {makeReactiveRoot, makeStore} from 'universal-stores';
+
+const {makeEffect, dispose} = makeReactiveRoot();
+
+const store$ = makeStore(1);
+makeEffect(() => {
+	console.log(store$.watch()); // immediately prints 1
+});
+store$.set(2); // makes the effect above print 2
+dispose();
+store$.set(3); // does nothing, as the effect above has been unregistered
+```
+
+The `dispose` is the equivalent, in observable terms, to the `unsubscribe` function. The difference is that it's a bulk operation, acting on all effects registered under the same root.
+
+The cleanup function of an effect is simply the function optionally returned inside
+a `makeEffect` call:
+
+```ts
+import {makeReactiveRoot, makeStore} from 'universal-stores';
+
+const {makeEffect, dispose} = makeReactiveRoot();
+
+const store$ = makeStore(1);
+makeEffect(() => {
+	console.log(store$.watch()); // immediately prints 1
+
+	return () => console.clear();
+});
+store$.set(2); // makes the effect above clean the console, then print 2
+dispose(); // cleans the console
+store$.set(3); // does nothing, as the effect above has been unregistered
+```
+
+As shown in the example above, the cleanup function gets invoked when `dispose` is
+called or whenever the effect needs to re-run because at least one of its dependencies
+has changed.
+
+### Batching
+
+Consider the following code:
+
+```ts
+import {makeReactiveRoot, makeStore} from 'universal-stores';
+
+const {makeEffect} = makeReactiveRoot();
+
+const greeting$ = makeStore('Hello');
+const name$ = makeStore('John');
+makeEffect(() => {
+	console.log(`${greeting$.watch()}, ${name$.watch()}`); // immediately prints "Hello, John"
+});
+
+greeting$.set('Bye'); // prints "Bye, John"
+name$.set('Jack'); // prints "Bye, Jack"
+```
+
+Sometimes it may be desirable to avoid triggering effects multiple times while updating different stores. The `batchEffects` function exists exactly for this use case. With a slight change to the code above we can update `greeting$` and `name$` "instantaneously":
+
+```ts
+import {makeReactiveRoot, makeStore, batchEffects} from 'universal-stores';
+
+const {makeEffect} = makeReactiveRoot();
+
+const greeting$ = makeStore('Hello');
+const name$ = makeStore('John');
+makeEffect(() => {
+	console.log(`${greeting$.watch()}, ${name$.watch()}`); // immediately prints "Hello, John"
+});
+
+batchEffects(() => {
+	greeting$.set('Bye'); // doesn't trigger
+	name$.set('Jack'); // doesn't trigger
+}); // triggers, printing "Bye, Jack"
+```
+
+### Derive-like behavior
+
+The `.watch()` method doesn't need to be "physically" inside the `makeEffect` callback, the only condition needed for the effect to correctly register its dependencies is for `.watch()` to
+be called synchronously during the first execution of the effect.
+
+For example, this code:
+
+```ts
+import {makeReactiveRoot, makeStore} from 'universal-stores';
+
+const {makeEffect} = makeReactiveRoot();
+
+const greeting$ = makeStore('Hello');
+const name$ = makeStore('John');
+makeEffect(() => {
+	console.log(`${greeting$.watch()}, ${name$.watch()}`); // immediately prints "Hello, John"
+});
+greeting$.set('Bye'); // prints "Bye, John"
+```
+
+is equivalent to this:
+
+```ts
+import {makeReactiveRoot, makeStore} from 'universal-stores';
+
+const {makeEffect} = makeReactiveRoot();
+
+const greeting$ = makeStore('Hello');
+const name$ = makeStore('John');
+const greet = () => `${greeting$.watch()}, ${name$.watch()}`;
+makeEffect(() => {
+	console.log(greet()); // immediately prints "Hello, John"
+});
+greeting$.set('Bye'); // prints "Bye, John"
+```
+
+
 ## Motivation
 
 UI frameworks often ship with their own state management layer,
 either built-in or provided by third parties.
 
-State management, however, should **not** be coupled to
+State management, however, should **not** be coupled with
 the UI framework or library you're currently working with. Moreover, state management
 is also useful in non-UI applications (e.g. backend, background processes, etc.).
 
