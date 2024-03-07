@@ -48,7 +48,7 @@ Error.constructor
 
 #### Defined in
 
-[src/lib/effect.ts:57](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L57)
+[src/lib/effect.ts:53](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L53)
 
 ## Properties
 

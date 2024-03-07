@@ -40,7 +40,7 @@ Error.constructor
 
 #### Defined in
 
-[src/lib/effect.ts:76](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L76)
+[src/lib/effect.ts:72](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L72)
 
 ## Properties
 

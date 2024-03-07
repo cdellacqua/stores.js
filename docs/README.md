@@ -7,7 +7,6 @@ universal-stores
 ### Classes
 
 - [BatchingEffectError](classes/BatchingEffectError.md)
-- [MissingEffectError](classes/MissingEffectError.md)
 - [NestedEffectError](classes/NestedEffectError.md)
 - [ReactiveRootDisposeError](classes/ReactiveRootDisposeError.md)
 
@@ -27,6 +26,10 @@ universal-stores
 - [Unsubscribe](README.md#unsubscribe)
 - [Update](README.md#update)
 - [Updater](README.md#updater)
+
+### Variables
+
+- [storeRuntime](README.md#storeruntime)
 
 ### Functions
 
@@ -138,7 +141,7 @@ the dispose method.
 
 #### Defined in
 
-[src/lib/effect.ts:86](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L86)
+[src/lib/effect.ts:82](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L82)
 
 ___
 
@@ -168,7 +171,7 @@ therefore its value can only be changed by a [StartHandler](README.md#starthandl
 
 #### Defined in
 
-[src/lib/store.ts:39](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L39)
+[src/lib/store.ts:43](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L43)
 
 ___
 
@@ -271,7 +274,7 @@ provides the current value upon subscription.
 
 #### Defined in
 
-[src/lib/store.ts:83](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L83)
+[src/lib/store.ts:87](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L87)
 
 ___
 
@@ -296,7 +299,7 @@ Configurations for Store<T> and ReadonlyStore<T>.
 
 #### Defined in
 
-[src/lib/store.ts:100](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L100)
+[src/lib/store.ts:104](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L104)
 
 ___
 
@@ -414,6 +417,22 @@ A generic updater function. Used in [Store](README.md#store)
 
 [src/lib/store.ts:23](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L23)
 
+## Variables
+
+### storeRuntime
+
+• `Const` **storeRuntime**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `storeCount` | `number` |
+
+#### Defined in
+
+[src/lib/store.ts:33](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L33)
+
 ## Functions
 
 ### batchEffects
@@ -438,7 +457,7 @@ the effects are executed.
 
 #### Defined in
 
-[src/lib/effect.ts:164](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L164)
+[src/lib/effect.ts:162](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L162)
 
 ___
 
@@ -572,7 +591,7 @@ Create a [ReactiveRoot](README.md#reactiveroot), providing a makeEffect and a di
 
 #### Defined in
 
-[src/lib/effect.ts:105](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L105)
+[src/lib/effect.ts:101](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L101)
 
 ___
 
@@ -615,7 +634,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[src/lib/store.ts:251](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L251)
+[src/lib/store.ts:258](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L258)
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
 
@@ -652,7 +671,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[src/lib/store.ts:272](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L272)
+[src/lib/store.ts:279](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L279)
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `startOrConfig?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
 
@@ -691,7 +710,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[src/lib/store.ts:295](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L295)
+[src/lib/store.ts:302](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L302)
 
 ___
 
@@ -730,7 +749,7 @@ a Store
 
 #### Defined in
 
-[src/lib/store.ts:124](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L124)
+[src/lib/store.ts:128](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L128)
 
 ▸ **makeStore**<`T`\>(`initialValue`, `config?`): [`Store`](README.md#store)<`T`\>
 
@@ -765,7 +784,7 @@ a Store
 
 #### Defined in
 
-[src/lib/store.ts:140](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L140)
+[src/lib/store.ts:144](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L144)
 
 ▸ **makeStore**<`T`\>(`initialValue`, `startOrConfig?`): [`Store`](README.md#store)<`T`\>
 
@@ -800,4 +819,4 @@ a Store
 
 #### Defined in
 
-[src/lib/store.ts:156](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L156)
+[src/lib/store.ts:160](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L160)
