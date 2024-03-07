@@ -5,7 +5,7 @@ export const effectRuntime: {
 	 * The effect that is currently being "instantiated".
 	 * The instantiation of an effect corresponds to its first run.
 	 */
-	instantiatingEffectId: number | undefined;
+	instantiatingEffect: Effect | undefined;
 	/**
 	 * The number of effect ever register during the process runtime. This number is
 	 * used as an auto-increment ID.
@@ -28,26 +28,22 @@ export const effectRuntime: {
 	/** Map<reactiveRootId, allUnsubscribeFnsOfRegisteredEffects> */
 	rootUnsubscribes: Map<number, Unsubscribe[]>;
 } = {
-	instantiatingEffectId: undefined,
+	instantiatingEffect: undefined,
 	effectCount: 0,
 	isBatching: 0,
 	pendingEffectBatch: new Map(),
-	effectById: new Map<number, Effect>(),
+	effectById: new Map(),
 	reactiveRootCount: 0,
-	rootByEffectId: new Map<number, number>(),
-	rootUnsubscribes: new Map<number, Unsubscribe[]>(),
+	rootByEffectId: new Map(),
+	rootUnsubscribes: new Map(),
 };
 
 type Effect = {
+	id: number;
 	effectFn: () => void | (() => void);
 	cleanupFn?: () => void;
+	dependencies: number[];
 };
-
-/**
- * Error thrown if a store subscriber tied to an effect couldn't find the effect function
- * in the runtime.
- */
-export class MissingEffectError extends Error {}
 
 /**
  * Error thrown if one or more cleanup functions registered by the effects inside a reactive
@@ -109,7 +105,7 @@ export function makeReactiveRoot(): ReactiveRoot {
 	const ownedEffectIds = new Set<number>();
 
 	function makeEffect(fn: () => void | (() => void)): void {
-		if (effectRuntime.instantiatingEffectId !== undefined) {
+		if (effectRuntime.instantiatingEffect !== undefined) {
 			throw new NestedEffectError();
 		}
 		try {
@@ -117,14 +113,16 @@ export function makeReactiveRoot(): ReactiveRoot {
 			const effectId = effectRuntime.effectCount;
 			ownedEffectIds.add(effectId);
 			const effect: Effect = {
+				id: effectId,
 				effectFn: fn,
+				dependencies: [],
 			};
 			effectRuntime.effectById.set(effectId, effect);
 			effectRuntime.rootByEffectId.set(effectId, subscriptionsHolderId);
-			effectRuntime.instantiatingEffectId = effectId;
+			effectRuntime.instantiatingEffect = effect;
 			effect.cleanupFn = effect.effectFn() as (() => void) | undefined;
 		} finally {
-			effectRuntime.instantiatingEffectId = undefined;
+			effectRuntime.instantiatingEffect = undefined;
 		}
 	}
 
@@ -195,50 +193,52 @@ export function batchEffects(action: () => void): void {
  * NOTE: __for internal use only__
  * @param store$ a partial store containing just the `subscriber` and `content` method.
  */
-export function radioActiveContent<T>(store$: Pick<ReadonlyStore<T>, 'subscribe' | 'content'>): T {
-	if (
-		effectRuntime.instantiatingEffectId !== undefined &&
-		effectRuntime.instantiatingEffectId === effectRuntime.effectCount
-	) {
-		let v: T | undefined;
-		const instanceId = effectRuntime.instantiatingEffectId;
-		let firstRun = true;
+export function radioActiveContent<T>(
+	storeId: number,
+	store$: Pick<ReadonlyStore<T>, 'subscribe' | 'content'>,
+): T {
+	if (effectRuntime.instantiatingEffect !== undefined) {
+		const effect = effectRuntime.instantiatingEffect;
+		const effectId = effect.id;
 
-		const rootId = effectRuntime.rootByEffectId.get(instanceId) as number;
-		let unsubscribes = effectRuntime.rootUnsubscribes.get(rootId);
-		if (!unsubscribes) {
-			unsubscribes = [];
-			effectRuntime.rootUnsubscribes.set(rootId, unsubscribes);
-		}
-		const unsubscribe = store$.subscribe((current) => {
-			v = current;
-			if (firstRun) {
-				firstRun = false;
-				return;
+		if (!effect.dependencies.includes(storeId)) {
+			effect.dependencies.push(storeId);
+
+			const rootId = effectRuntime.rootByEffectId.get(effectId) as number;
+			let unsubscribes = effectRuntime.rootUnsubscribes.get(rootId);
+			if (!unsubscribes) {
+				unsubscribes = [];
+				effectRuntime.rootUnsubscribes.set(rootId, unsubscribes);
 			}
-			const effect = effectRuntime.effectById.get(instanceId);
-			if (!effect) {
-				throw new MissingEffectError(`effect with id "${instanceId}" not registered`);
-			} else {
+
+			let firstRun = true;
+			let v: T | undefined;
+			const unsubscribe = store$.subscribe((current) => {
+				v = current;
+				if (firstRun) {
+					firstRun = false;
+					return;
+				}
+
 				const effectRunner = () => {
-					const prevRunning = effectRuntime.instantiatingEffectId;
-					effectRuntime.instantiatingEffectId = undefined;
+					const prevRunning = effectRuntime.instantiatingEffect;
+					effectRuntime.instantiatingEffect = undefined;
 					try {
 						effect.cleanupFn?.();
 						effect.cleanupFn = effect.effectFn() as (() => void) | undefined;
 					} finally {
-						effectRuntime.instantiatingEffectId = prevRunning;
+						effectRuntime.instantiatingEffect = prevRunning;
 					}
 				};
 				if (effectRuntime.isBatching > 0) {
-					effectRuntime.pendingEffectBatch.set(instanceId, effectRunner);
+					effectRuntime.pendingEffectBatch.set(effectId, effectRunner);
 				} else {
 					effectRunner();
 				}
-			}
-		});
-		unsubscribes.push(unsubscribe);
-		return v as T;
+			});
+			unsubscribes.push(unsubscribe);
+			return v as T;
+		}
 	}
 	return store$.content();
 }

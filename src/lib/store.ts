@@ -30,6 +30,10 @@ export type StopHandler = () => void;
 /** A function that gets called once a store gets at least one subscriber. Used in {@link Store} */
 export type StartHandler<T> = (set: Setter<T>) => StopHandler | void;
 
+export const storeRuntime = {
+	storeCount: 0,
+};
+
 /**
  * A store that can have subscribers and emit values to them. It also
  * provides the current value upon subscription. It's readonly in the
@@ -220,10 +224,13 @@ export function makeStore<T>(
 		set(updater(content()));
 	};
 
+	storeRuntime.storeCount++;
+	const storeId = storeRuntime.storeCount;
+
 	return {
 		content,
 		set,
-		watch: () => radioActiveContent({content, subscribe}),
+		watch: () => radioActiveContent(storeId, {content, subscribe}),
 		subscribe,
 		update,
 		nOfSubscriptions: signal.nOfSubscriptions,

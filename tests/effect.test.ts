@@ -1,11 +1,6 @@
 import {expect} from 'chai';
 import {ReactiveRootDisposeError, batchEffects, makeReactiveRoot, makeStore} from '../src/lib';
-import {
-	BatchingEffectError,
-	MissingEffectError,
-	NestedEffectError,
-	effectRuntime,
-} from '../src/lib/effect';
+import {BatchingEffectError, NestedEffectError, effectRuntime} from '../src/lib/effect';
 
 function checkForMemoryLeaks() {
 	// considering we always call dispose, we should always get 0 here
@@ -29,34 +24,6 @@ describe('effect', () => {
 		expect(store$.nOfSubscriptions()).to.eq(0);
 		store$.set(2);
 		expect(actual).to.eq(1);
-
-		checkForMemoryLeaks();
-	});
-
-	it('corrupts the effectRuntime', () => {
-		const {makeEffect, dispose} = makeReactiveRoot();
-
-		const store$ = makeStore(0);
-		let actual: unknown | undefined;
-		makeEffect(() => {
-			actual = store$.watch();
-		});
-		// corrupt
-		const effectByIdSnapshot = effectRuntime.effectById;
-		effectRuntime.effectById = new Map();
-		{
-			expect(store$.nOfSubscriptions()).to.eq(1);
-			expect(actual).to.eq(0);
-			expect(() => store$.set(1)).to.throw(MissingEffectError);
-			expect(actual).to.eq(0);
-		}
-		// restore
-		effectRuntime.effectById = effectByIdSnapshot;
-		{
-			store$.set(2);
-			expect(actual).to.eq(2);
-		}
-		dispose();
 
 		checkForMemoryLeaks();
 	});
@@ -417,6 +384,37 @@ describe('effect', () => {
 	it('calls watch outside an effect', () => {
 		const store1$ = makeStore(5);
 		expect(store1$.watch()).to.eq(5);
+
+		checkForMemoryLeaks();
+	});
+
+	it('calls watch multiple times inside the same effect', () => {
+		const store1$ = makeStore(0);
+		const store2$ = makeStore(0);
+		const {makeEffect, dispose} = makeReactiveRoot();
+
+		let effectRuns = 0;
+		makeEffect(() => {
+			store1$.watch();
+			store1$.watch();
+			store1$.watch();
+			store2$.watch();
+			store2$.watch();
+			store2$.watch();
+			effectRuns++;
+		});
+		expect(effectRuns).to.eq(1);
+		store1$.set(1);
+		expect(effectRuns).to.eq(2);
+		store2$.set(1);
+		expect(effectRuns).to.eq(3);
+		batchEffects(() => {
+			store1$.set(2);
+			store2$.set(2);
+		});
+		expect(effectRuns).to.eq(4);
+
+		dispose();
 
 		checkForMemoryLeaks();
 	});
