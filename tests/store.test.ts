@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {makeStore} from '../src/lib';
+import {makeStore} from '../src/lib/index.js';
 
 describe('store', () => {
 	it('creates a store', () => {

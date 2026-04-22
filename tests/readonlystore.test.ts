@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {makeReadonlyStore} from '../src/lib';
+import {makeReadonlyStore} from '../src/lib/index.js';
 
 describe('store', () => {
 	it('creates a store', () => {

@@ -61,7 +61,7 @@ Configurations for derived stores.
 
 #### Defined in
 
-[src/lib/composition.ts:18](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L18)
+[stores.js/src/lib/composition.ts:18](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L18)
 
 ___
 
@@ -94,7 +94,7 @@ A comparison function used to optimize subscribers notifications. Used in [Store
 
 #### Defined in
 
-[src/lib/store.ts:27](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L27)
+[stores.js/src/lib/store.ts:27](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L27)
 
 ___
 
@@ -120,7 +120,7 @@ A generic getter function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[src/lib/store.ts:21](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L21)
+[stores.js/src/lib/store.ts:21](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L21)
 
 ___
 
@@ -141,7 +141,7 @@ the dispose method.
 
 #### Defined in
 
-[src/lib/effect.ts:82](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L82)
+[stores.js/src/lib/effect.ts:82](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L82)
 
 ___
 
@@ -171,7 +171,7 @@ therefore its value can only be changed by a [StartHandler](README.md#starthandl
 
 #### Defined in
 
-[src/lib/store.ts:43](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L43)
+[stores.js/src/lib/store.ts:43](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L43)
 
 ___
 
@@ -203,7 +203,7 @@ A generic setter function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[src/lib/store.ts:19](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L19)
+[stores.js/src/lib/store.ts:19](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L19)
 
 ___
 
@@ -235,7 +235,7 @@ A function that gets called once a store gets at least one subscriber. Used in [
 
 #### Defined in
 
-[src/lib/store.ts:31](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L31)
+[stores.js/src/lib/store.ts:31](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L31)
 
 ___
 
@@ -255,7 +255,7 @@ A function that gets called once a store reaches 0 subscribers. Used in [Store](
 
 #### Defined in
 
-[src/lib/store.ts:29](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L29)
+[stores.js/src/lib/store.ts:29](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L29)
 
 ___
 
@@ -274,7 +274,7 @@ provides the current value upon subscription.
 
 #### Defined in
 
-[src/lib/store.ts:87](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L87)
+[stores.js/src/lib/store.ts:87](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L87)
 
 ___
 
@@ -299,7 +299,7 @@ Configurations for Store<T> and ReadonlyStore<T>.
 
 #### Defined in
 
-[src/lib/store.ts:104](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L104)
+[stores.js/src/lib/store.ts:104](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L104)
 
 ___
 
@@ -331,7 +331,7 @@ A generic subscriber that takes a value emitted by a signal as its only paramete
 
 #### Defined in
 
-node_modules/@cdellacqua/signals/dist/index.d.ts:2
+signals.js/dist/index.d.ts:2
 
 ___
 
@@ -351,7 +351,7 @@ A function that's used to unsubscribe a subscriber from a signal.
 
 #### Defined in
 
-node_modules/@cdellacqua/signals/dist/index.d.ts:4
+signals.js/dist/index.d.ts:4
 
 ___
 
@@ -383,7 +383,7 @@ A generic update function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[src/lib/store.ts:25](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L25)
+[stores.js/src/lib/store.ts:25](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L25)
 
 ___
 
@@ -415,7 +415,7 @@ A generic updater function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[src/lib/store.ts:23](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L23)
+[stores.js/src/lib/store.ts:23](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L23)
 
 ## Variables
 
@@ -431,7 +431,7 @@ A generic updater function. Used in [Store](README.md#store)
 
 #### Defined in
 
-[src/lib/store.ts:33](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L33)
+[stores.js/src/lib/store.ts:33](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L33)
 
 ## Functions
 
@@ -457,7 +457,7 @@ the effects are executed.
 
 #### Defined in
 
-[src/lib/effect.ts:162](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L162)
+[stores.js/src/lib/effect.ts:162](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L162)
 
 ___
 
@@ -497,7 +497,7 @@ source$.set(16); // triggers both console.logs, printing 16 and 32
 
 #### Defined in
 
-[src/lib/composition.ts:41](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L41)
+[stores.js/src/lib/composition.ts:41](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L41)
 
 ▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStores`, `map`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
 
@@ -536,7 +536,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 #### Defined in
 
-[src/lib/composition.ts:65](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L65)
+[stores.js/src/lib/composition.ts:65](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L65)
 
 ▸ **makeDerivedStore**<`TIn`, `TOut`\>(`readonlyStores`, `map`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`TOut`\>
 
@@ -575,7 +575,7 @@ source2$.set(9); // prints 9 (second console.log) and 20 (third console.log)
 
 #### Defined in
 
-[src/lib/composition.ts:89](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L89)
+[stores.js/src/lib/composition.ts:89](https://github.com/cdellacqua/stores.js/blob/main/src/lib/composition.ts#L89)
 
 ___
 
@@ -591,7 +591,7 @@ Create a [ReactiveRoot](README.md#reactiveroot), providing a makeEffect and a di
 
 #### Defined in
 
-[src/lib/effect.ts:101](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L101)
+[stores.js/src/lib/effect.ts:101](https://github.com/cdellacqua/stores.js/blob/main/src/lib/effect.ts#L101)
 
 ___
 
@@ -634,7 +634,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[src/lib/store.ts:258](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L258)
+[stores.js/src/lib/store.ts:258](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L258)
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `config?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
 
@@ -671,7 +671,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[src/lib/store.ts:279](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L279)
+[stores.js/src/lib/store.ts:279](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L279)
 
 ▸ **makeReadonlyStore**<`T`\>(`initialValue`, `startOrConfig?`): [`ReadonlyStore`](README.md#readonlystore)<`T`\>
 
@@ -710,7 +710,7 @@ a ReadonlyStore
 
 #### Defined in
 
-[src/lib/store.ts:302](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L302)
+[stores.js/src/lib/store.ts:302](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L302)
 
 ___
 
@@ -749,7 +749,7 @@ a Store
 
 #### Defined in
 
-[src/lib/store.ts:128](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L128)
+[stores.js/src/lib/store.ts:128](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L128)
 
 ▸ **makeStore**<`T`\>(`initialValue`, `config?`): [`Store`](README.md#store)<`T`\>
 
@@ -784,7 +784,7 @@ a Store
 
 #### Defined in
 
-[src/lib/store.ts:144](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L144)
+[stores.js/src/lib/store.ts:144](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L144)
 
 ▸ **makeStore**<`T`\>(`initialValue`, `startOrConfig?`): [`Store`](README.md#store)<`T`\>
 
@@ -819,4 +819,4 @@ a Store
 
 #### Defined in
 
-[src/lib/store.ts:160](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L160)
+[stores.js/src/lib/store.ts:160](https://github.com/cdellacqua/stores.js/blob/main/src/lib/store.ts#L160)

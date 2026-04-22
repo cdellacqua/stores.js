@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {makeDerivedStore, makeReadonlyStore, makeStore, ReadonlyStore} from '../src/lib';
+import {makeDerivedStore, makeReadonlyStore, makeStore, ReadonlyStore} from '../src/lib/index.js';
 
 describe('derived store', () => {
 	it('creates a derived using one source', () => {

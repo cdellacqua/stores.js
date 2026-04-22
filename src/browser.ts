@@ -1,5 +1,5 @@
 import './style.css';
-import {makeDerivedStore, makeReactiveRoot, makeStore} from './lib';
+import {makeDerivedStore, makeReactiveRoot, makeStore} from './lib/index.js';
 
 const appDiv = document.getElementById('app') as HTMLDivElement;
 

@@ -1,4 +1,4 @@
-import {makeReactiveRoot, makeStore} from './lib';
+import {makeReactiveRoot, makeStore} from './lib/index.js';
 
 const random$ = makeStore(0);
 

@@ -6,7 +6,7 @@ import {
 	makeReadonlyStore,
 	makeStore,
 	ReadonlyStore,
-} from '../src/lib';
+} from '../src/lib/index.js';
 
 describe('examples', () => {
 	it('readme 1', () => {

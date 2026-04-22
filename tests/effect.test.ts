@@ -1,6 +1,11 @@
 import {expect} from 'chai';
-import {ReactiveRootDisposeError, batchEffects, makeReactiveRoot, makeStore} from '../src/lib';
-import {BatchingEffectError, NestedEffectError, effectRuntime} from '../src/lib/effect';
+import {
+	ReactiveRootDisposeError,
+	batchEffects,
+	makeReactiveRoot,
+	makeStore,
+} from '../src/lib/index.js';
+import {BatchingEffectError, NestedEffectError, effectRuntime} from '../src/lib/effect.js';
 
 function checkForMemoryLeaks() {
 	// considering we always call dispose, we should always get 0 here

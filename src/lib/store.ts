@@ -11,7 +11,7 @@
  */
 
 import {makeSignal, Subscriber, Unsubscribe} from '@cdellacqua/signals';
-import {radioActiveContent} from './effect';
+import {radioActiveContent} from './effect.js';
 
 export type {Subscriber, Unsubscribe} from '@cdellacqua/signals';
 

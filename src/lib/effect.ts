@@ -1,4 +1,4 @@
-import {ReadonlyStore, Unsubscribe} from './store';
+import {ReadonlyStore, Unsubscribe} from './store.js';
 
 export const effectRuntime: {
 	/**

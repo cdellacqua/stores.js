@@ -2,9 +2,9 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"useDefineForClassFields": true,
-		"module": "ESNext",
+		"module": "nodenext",
 		"lib": ["ESNext", "DOM"],
-		"moduleResolution": "Node",
+		"moduleResolution": "nodenext",
 		"strict": true,
 		"sourceMap": true,
 		"resolveJsonModule": true,
@@ -12,7 +12,8 @@
 		"noEmit": false,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"noImplicitReturns": true
+		"noImplicitReturns": true,
+		"types": ["mocha"]
 	},
 	"include": ["./src", "./tests"]
 }

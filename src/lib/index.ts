@@ -1,5 +1,5 @@
-export * from './store';
-export * from './composition';
+export * from './store.js';
+export * from './composition.js';
 export {
 	ReactiveRootDisposeError,
 	batchEffects,
@@ -7,4 +7,4 @@ export {
 	BatchingEffectError,
 	NestedEffectError,
 	type ReactiveRoot,
-} from './effect';
+} from './effect.js';
