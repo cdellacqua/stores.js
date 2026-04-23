@@ -1,4 +1,3 @@
-import {expect} from 'chai';
 import {makeStore} from '../src/lib/index.js';
 
 describe('store', () => {

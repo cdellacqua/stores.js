@@ -2,18 +2,19 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"useDefineForClassFields": true,
-		"module": "nodenext",
-		"lib": ["ESNext", "DOM"],
-		"moduleResolution": "nodenext",
+		"module": "NodeNext",
+		"lib": ["ES2022", "DOM"],
+		"moduleResolution": "NodeNext",
+		"types": ["node", "vitest/globals"],
 		"strict": true,
 		"sourceMap": true,
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
-		"noEmit": false,
+		"noEmit": true,
+		"skipLibCheck": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"noImplicitReturns": true,
-		"types": ["mocha"]
+		"noImplicitReturns": true
 	},
 	"include": ["./src", "./tests"]
 }

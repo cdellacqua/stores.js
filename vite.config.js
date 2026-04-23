@@ -1,31 +1,53 @@
 import {defineConfig} from 'vite';
+import dts from 'vite-plugin-dts';
 import {readFileSync} from 'fs';
-import {resolve, join, dirname} from 'path';
-import {fileURLToPath} from 'url';
+import {join} from 'path';
 
-const currentDir = dirname(fileURLToPath(import.meta.url));
+const {dependencies = {}, peerDependencies = {}, camelCaseName} = JSON.parse(readFileSync('package.json').toString());
 
-const {devDependencies, peerDependencies, camelCaseName} = JSON.parse(readFileSync(join(currentDir, 'package.json')));
+export default defineConfig(({mode}) => {
+	const isUmdBuild = mode === 'umd';
 
-export default defineConfig({
-	build: {
-		lib: {
-			formats: ['cjs', 'umd', 'es'],
-			entry: resolve(currentDir, 'src', 'lib', 'index.ts'),
-			name: camelCaseName,
-			fileName: (format) => (format === 'cjs' ? 'index.cjs' : `index.${format}.js`),
+	return {
+		plugins: isUmdBuild
+			? []
+			: [
+					dts({
+						tsconfigPath: './tsconfig.lib.json',
+					}),
+				],
+		test: {
+			globals: true,
 		},
-		rollupOptions: {
-			// make sure to externalize deps that shouldn't be bundled
-			// into your library
-			external: [...Object.keys(devDependencies || {}), ...Object.keys(peerDependencies || {})],
-			output: {
-				// Provide global variables to use in the UMD build
-				// for externalized deps
-				globals: {
-					// for example react: 'React'
+		build: {
+			emptyOutDir: !isUmdBuild,
+			sourcemap: true,
+			lib: {
+				formats: isUmdBuild ? ['umd'] : ['cjs', 'es'],
+				entry: join('src', 'lib', 'index.ts'),
+				name: camelCaseName,
+				fileName: (format) => {
+					switch (format) {
+						case 'cjs':
+							return `index.cjs`;
+						case 'umd':
+							return `index.umd.js`;
+						case 'es':
+							return `index.js`;
+					}
+				},
+			},
+			rollupOptions: {
+				// Externalize deps for ESM/CJS like tsup, but keep UMD more self-contained.
+				external: isUmdBuild ? Object.keys(peerDependencies) : [...Object.keys(dependencies), ...Object.keys(peerDependencies)],
+				output: {
+					// Provide global variables to use in the UMD build
+					// for externalized deps
+					globals: {
+						// for example react: 'React'
+					},
 				},
 			},
 		},
-	},
+	};
 });
