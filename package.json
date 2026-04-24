@@ -30,9 +30,14 @@
 	],
 	"exports": {
 		".": {
-			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js",
-			"require": "./dist/index.cjs"
+			"import": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			},
+			"require": {
+				"types": "./dist/index.d.cts",
+				"default": "./dist/index.cjs"
+			}
 		},
 		"./package.json": "./package.json"
 	},
@@ -42,7 +47,7 @@
 		"test:watch": "vitest",
 		"dev:browser": "vite",
 		"dev:node": "tsx watch src/node.ts",
-		"build": "vite build --mode lib && vite build --mode umd",
+		"build": "vite build --mode lib && vite build --mode umd && node --input-type=module -e \"import {copyFileSync} from 'node:fs'; copyFileSync('dist/index.d.ts', 'dist/index.d.cts');\"",
 		"typecheck": "tsc",
 		"doc": "rimraf docs && typedoc --gitRevision main --readme none --plugin typedoc-plugin-markdown src/lib/index.ts",
 		"publint": "publint",
