@@ -59,8 +59,7 @@
 		"lint": "eslint --max-warnings 0 .",
 		"lint:fix": "eslint --fix .",
 		"format": "prettier --check .",
-		"format:fix": "prettier --write .",
-		"setup": "node setup.js"
+		"format:fix": "prettier --write ."
 	},
 	"devDependencies": {
 		"@types/node": "^20.19.39",
